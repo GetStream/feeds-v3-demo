@@ -4,13 +4,13 @@ import { StreamClient } from '@stream-io/node-sdk';
 
 console.log(process.env.NEXT_PUBLIC_STREAM_API_KEY);
 console.log(process.env.STREAM_API_SECRET);
-console.log(process.env.FEEDS_BACKEND_BASE_URL);
+console.log(process.env.NEXT_PUBLIC_FEEDS_BASE_URL);
 
 const client = new StreamClient(
     process.env.NEXT_PUBLIC_STREAM_API_KEY!,
     process.env.STREAM_API_SECRET!,
     {
-      basePath: process.env.FEEDS_BACKEND_BASE_URL,
+      basePath: process.env.NEXT_PUBLIC_FEEDS_BASE_URL,
     }
 );
 

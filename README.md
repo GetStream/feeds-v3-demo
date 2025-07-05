@@ -16,7 +16,6 @@ Feeds V3 proof of concept using Next.js and Stream SDK, demonstrating scalable, 
    NEXT_PUBLIC_STREAM_API_KEY=your_stream_api_key
    NEXT_PUBLIC_FEEDS_BASE_URL=your_feeds_base_url
    STREAM_API_SECRET=your_stream_api_secret
-   FEEDS_BACKEND_BASE_URL=your_backend_base_url
    ```
 
 3. **Run Development Server**
