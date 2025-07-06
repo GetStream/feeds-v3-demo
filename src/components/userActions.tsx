@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { UserPlus, UserMinus } from 'lucide-react';
-import { useUser } from '../../contexts/stream';
-import { useFollowers } from '../../contexts/followers';
+import { useUser } from '../contexts/stream';
+import { useFollowers } from '../contexts/followers';
 import { Avatar } from './avatar';
 
 interface UserActionsProps {

@@ -1,7 +1,7 @@
 "use client";
 
 import { MdHome, MdSearch, MdNotificationsNone, MdBookmarkBorder, MdPerson, MdTrendingUp } from 'react-icons/md';
-import { useUser } from '../../contexts/stream';
+import { useUser } from '../contexts/stream';
 import { Avatar } from './avatar';
 import { LogOut } from 'lucide-react';
 

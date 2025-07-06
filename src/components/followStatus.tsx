@@ -1,6 +1,6 @@
 'use client';
 
-import { useFollowers } from '../../contexts/followers';
+import { useFollowers } from '../contexts/followers';
 
 interface FollowStatusProps {
   userId: string;

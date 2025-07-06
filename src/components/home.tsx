@@ -1,7 +1,7 @@
 'use client';
 
-import { useFeedActivities, useFeedActions, useComments } from '../../hooks';
-import { useUser } from '../../contexts/stream';
+import { useFeedActivities, useFeedActions, useComments } from '../hooks';
+import { useUser } from '../contexts/stream';
 import { Composer } from './composer';
 import ReactionsPanel from './reaction';
 import CommentsPanel from './comment';

@@ -1,5 +1,5 @@
 "use client"
-import { useWhoToFollow } from "../../hooks/useWhoToFollow";
+import { useWhoToFollow } from "../hooks/useWhoToFollow";
 import { Avatar } from "./avatar";
 import { UserActions } from "./userActions";
 

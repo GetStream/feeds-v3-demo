@@ -1,7 +1,7 @@
-import Sidebar from './components/sidebar';
-import FeedView from './components/home';
-import { Avatar } from './components/avatar';
-import { WhoToFollow } from './components/whotofollow';
+import Sidebar from '../components/sidebar';
+import FeedView from '../components/home';
+import { Avatar } from '../components/avatar';
+import { WhoToFollow } from '../components/whotofollow';
 
 export default function Home() {
   return (

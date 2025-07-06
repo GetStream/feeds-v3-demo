@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Send, Image, Smile } from 'lucide-react';
-import { useUser } from '../../contexts/stream';
+import { useUser } from '../contexts/stream';
 import { Avatar } from './avatar';
 
 interface ComposerProps {
