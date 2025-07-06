@@ -16,10 +16,18 @@ const client = new StreamClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { user_id } = await req.json();
+    const { user_id, name } = await req.json();
 
     if (!user_id) {
       return NextResponse.json({ error: 'Missing user_id' }, { status: 400 });
+    }
+
+    // Create or update user if name is provided
+    if (name) {
+      await client.upsertUsers([{
+        id: user_id,
+        name: name
+      }]);
     }
 
     const token = client.generateUserToken({ user_id });

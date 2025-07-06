@@ -2,23 +2,25 @@
 
 'use client';
 
+import { useUser } from '@/contexts/stream';
 import { ActivityResponse, FeedsClient } from '@stream-io/feeds-client';
 import { Heart, Bookmark, Pin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 type Props = {
-  client: FeedsClient;
   activity: ActivityResponse;
 };
 
-export default function ReactionsPanel({ client, activity }: Props) {
+export default function ReactionsPanel({ activity }: Props) {
   const [loading, setLoading] = useState(false);
   const [userReactions, setUserReactions] = useState<Set<string>>(new Set());
   const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
   const [isPinned, setIsPinned] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-
+  const { user, client } = useUser();
   useEffect(() => {
+    if (!user) return;
+    
     // Update reaction counts from activity
     const counts: Record<string, number> = {};
     const userReacts = new Set<string>();
@@ -31,7 +33,7 @@ export default function ReactionsPanel({ client, activity }: Props) {
 
     if (activity.latest_reactions) {
       activity.latest_reactions.forEach((reaction) => {
-        if (reaction.user.id === 'demo-user-1') {
+        if (reaction.user.id === user.id) {
           userReacts.add(reaction.type);
         }
       });
@@ -40,7 +42,7 @@ export default function ReactionsPanel({ client, activity }: Props) {
     // Check if activity is pinned by current user
     // Look for pinned activities in the activity data
     const isPinnedByUser = (activity as any).pinned_activities?.some(
-      (pinned: any) => pinned.user?.id === 'demo-user-1'
+      (pinned: any) => pinned.user?.id === user.id
     ) || false;
 
     // Check if activity is bookmarked by current user
@@ -50,10 +52,10 @@ export default function ReactionsPanel({ client, activity }: Props) {
     setUserReactions(userReacts);
     setIsPinned(isPinnedByUser);
     setIsBookmarked(isBookmarkedByUser);
-  }, [activity]);
+  }, [activity, user]);
 
   const handleReaction = async (type: string) => {
-    if (loading) return;
+    if (loading || !client) return;
     
     try {
       setLoading(true);
@@ -93,7 +95,7 @@ export default function ReactionsPanel({ client, activity }: Props) {
   };
 
   const handlePin = async () => {
-    if (loading) return;
+    if (loading || !client || !user) return;
     
     try {
       setLoading(true);
@@ -101,14 +103,14 @@ export default function ReactionsPanel({ client, activity }: Props) {
       if (isPinned) {
         await client.unpinActivity({
           feed_group_id: 'user',
-          feed_id: 'demo-user-1',
+          feed_id: user.id,
           activity_id: activity.id,
         });
         setIsPinned(false);
       } else {
         await client.pinActivity({
           feed_group_id: 'user',
-          feed_id: 'demo-user-1',
+          feed_id: user.id,
           activity_id: activity.id,
         });
         setIsPinned(true);
@@ -121,7 +123,7 @@ export default function ReactionsPanel({ client, activity }: Props) {
   };
 
   const handleBookmark = async () => {
-    if (loading) return;
+    if (loading || !client) return;
     
     try {
       setLoading(true);

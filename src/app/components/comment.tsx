@@ -3,56 +3,53 @@
 
 import { useEffect, useState } from 'react';
 import {
-  FeedsClient,
   ActivityResponse,
   CommentResponse,
-  AddCommentReactionResponse,
 } from '@stream-io/feeds-client';
 import { Heart, Trash2 } from 'lucide-react';
+import { filterCommentsForActivity } from '../../utils/utils';
+import { Avatar } from './avatar';
 
 interface CommentsPanelProps {
   activity: ActivityResponse;
-  client: FeedsClient;
+  allComments: CommentResponse[];
+  currentUserId: string;
+  addComment: (objectId: string, comment: string, objectType?: string) => Promise<CommentResponse | null>;
+  deleteComment: (commentId: string) => Promise<boolean>;
+  toggleCommentReaction: (commentId: string, type: string, userId?: string) => Promise<boolean>;
+  onCommentReactionUpdated?: () => void;
 }
 
-export default function CommentsPanel({ activity, client }: CommentsPanelProps) {
-  const [comments, setComments] = useState<CommentResponse[]>([]);
+export default function CommentsPanel({ 
+  activity, 
+  allComments, 
+  currentUserId,
+  addComment,
+  deleteComment,
+  toggleCommentReaction,
+  onCommentReactionUpdated 
+}: CommentsPanelProps) {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
+
+  // Filter comments for this specific activity
+  const comments = filterCommentsForActivity(allComments, activity.id);
 
   // Update showCommentInput when showInput prop changes
   useEffect(() => {
     setShowCommentInput(false);
   }, []);
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await client.queryComments({
-          filter: { object_id: activity.id },
-        });
-        setComments(res.comments);
-      } catch (err) {
-        console.error('Failed to fetch comments', err);
-      }
-    };
-
-    fetchComments();
-  }, [activity.id, client]);
-
   const handleAddComment = async () => {
     if (!newComment.trim() || newComment.length > 280) return;
     try {
       setLoading(true);
-      const res = await client.addComment({
-        object_id: activity.id,
-        object_type: 'activity',
-        comment: newComment,
-      });
-      setComments((prev) => [...prev, res.comment]);
-      setNewComment('');
-      setShowCommentInput(false);
+      const res = await addComment(activity.id, newComment, 'activity');
+      if (res) {
+        setNewComment('');
+        setShowCommentInput(false);
+      }
     } catch (err) {
       console.error('Failed to add comment', err);
     } finally {
@@ -62,30 +59,9 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
 
   const handleReactToComment = async (commentId: string, type: string) => {
     try {
-      const hasReaction = getUserReactionForComment(
-        comments.find(c => c.id === commentId)!, 
-        type
-      );
-
-      if (hasReaction) {
-        // Delete existing reaction
-        await client.deleteCommentReaction({
-          comment_id: commentId,
-          type,
-        });
-      } else {
-        // Add new reaction
-        const res: AddCommentReactionResponse = await client.addCommentReaction({
-          comment_id: commentId,
-          type,
-        });
-      }
-
-      // Refresh comments to get updated reaction state
-      const res = await client.queryComments({
-        filter: { object_id: activity.id },
-      });
-      setComments(res.comments);
+      await toggleCommentReaction(commentId, type, currentUserId);
+      // Notify parent to refresh comments
+      onCommentReactionUpdated?.();
     } catch (err) {
       console.error('Failed to handle comment reaction', err);
     }
@@ -93,10 +69,7 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
 
   const handleDeleteComment = async (commentId: string) => {
     try {
-      await client.deleteComment({
-        comment_id: commentId,
-      });
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      await deleteComment(commentId);
     } catch (err) {
       console.error('Failed to delete comment', err);
     }
@@ -104,7 +77,7 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
 
   const getUserReactionForComment = (comment: CommentResponse, type: string) => {
     return comment.latest_reactions?.find(
-      (reaction) => reaction.user.id === 'demo-user-1' && reaction.type === type
+      (reaction) => reaction.user.id === currentUserId && reaction.type === type
     );
   };
 
@@ -126,9 +99,10 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
       {showCommentInput ? (
         <div className="mb-4">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-semibold">
-              D
-            </div>
+            <Avatar 
+              userId={activity.user?.id}
+              size="sm"
+            />
             <div className="flex-1">
               <textarea
                 value={newComment}
@@ -197,9 +171,10 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
               key={comment.id}
               className="flex gap-3 p-3 rounded-lg hover:bg-zinc-800 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-semibold">
-                {comment.user?.id?.charAt(0)?.toUpperCase() || 'U'}
-              </div>
+              <Avatar 
+                userId={comment.user?.id}
+                size="sm"
+              />
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-semibold text-gray-100 text-sm">
@@ -224,7 +199,7 @@ export default function CommentsPanel({ activity, client }: CommentsPanelProps) 
                       {comment.latest_reactions.length} like{comment.latest_reactions.length > 1 ? 's' : ''}
                     </span>
                   )}
-                  {comment.user?.id === 'demo-user-1' && (
+                  {comment.user?.id === currentUserId && (
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
                       className="text-red-400 hover:text-red-300 transition-colors text-xs"

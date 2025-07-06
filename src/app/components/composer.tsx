@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Send, Image, Smile } from 'lucide-react';
+import { useUser } from '../../contexts/stream';
+import { Avatar } from './avatar';
 
 interface ComposerProps {
   onPost: (text: string) => Promise<void>;
@@ -11,7 +13,7 @@ export function Composer({ onPost }: ComposerProps) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const maxLength = 280; // Twitter-like character limit
-  const userId = 'demo-user-1'; // Consistent with feed component
+  const { user, getUserInitials } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +31,11 @@ export function Composer({ onPost }: ComposerProps) {
   return (
     <form onSubmit={handleSubmit} className="border border-gray-700 rounded-xl p-4 shadow-sm mb-4 bg-zinc-900">
       <div className="flex items-start space-x-3">
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm">
-          {userId.charAt(0).toUpperCase()}
-        </div>
+        <Avatar 
+          userName={user?.name}
+          userId={user?.id}
+          size="md"
+        />
         <div className="flex-1">
           <textarea
             value={text}
@@ -70,7 +74,7 @@ export function Composer({ onPost }: ComposerProps) {
               <button
                 type="submit"
                 disabled={!text.trim() || loading || isOverLimit}
-                className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 {loading ? (
                   <>

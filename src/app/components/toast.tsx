@@ -31,7 +31,7 @@ export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
   };
 
   const getStyles = () => {
-    const baseStyles = "fixed bottom-4 right-4 z-50 flex items-center space-x-3 p-4 rounded-lg shadow-lg border transition-all duration-300";
+    const baseStyles = "z-50 flex items-center space-x-3 p-4 rounded-lg shadow-lg border transition-all duration-300";
     
     switch (type) {
       case 'success':

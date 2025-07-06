@@ -1,5 +1,7 @@
 import Sidebar from './components/sidebar';
-import FeedView from './components/feed';
+import FeedView from './components/home';
+import { Avatar } from './components/avatar';
+import { WhoToFollow } from './components/whotofollow';
 
 export default function Home() {
   return (
@@ -50,40 +52,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-gray-800 mt-4">
-            <h2 className="text-lg font-semibold text-white mb-4">Who to follow</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
-                    S
-                  </div>
-                  <div>
-                    <div className="text-white font-medium">Stream Team</div>
-                    <div className="text-gray-400 text-sm">@stream</div>
-                  </div>
-                </div>
-                <button className="bg-white text-black px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
-                  Follow
-                </button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-semibold">
-                    N
-                  </div>
-                  <div>
-                    <div className="text-white font-medium">Next.js</div>
-                    <div className="text-gray-400 text-sm">@nextjs</div>
-                  </div>
-                </div>
-                <button className="bg-white text-black px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
-                  Follow
-                </button>
-              </div>
-            </div>
-          </div>
+          <WhoToFollow />
         </div>
       </div>
     </main>
