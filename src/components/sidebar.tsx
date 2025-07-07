@@ -28,13 +28,13 @@ export default function Sidebar() {
       {sidebarItems.map(({ icon: Icon, label, active }) => (
         <div 
           key={label} 
-          className={`flex items-center space-x-4 py-3 px-4 my-3 rounded-full cursor-pointer transition-all duration-200 w-full ${
+          className={`flex items-center space-x-2 py-3 px-4 my-3 rounded-full cursor-pointer transition-all duration-200 w-full ${
             active 
               ? 'bg-blue-500 text-white shadow-lg' 
               : 'text-gray-300 hover:bg-gray-800 hover:text-white'
           }`}
         >
-          <Icon className="text-xl" />
+          <Icon className="text-2xl" />
           <span className="text-xl font-medium">{label}</span>
         </div>
       ))}
@@ -58,7 +58,7 @@ export default function Sidebar() {
           </div>
           <div 
             onClick={clearUser}
-            className="p-1 hover:bg-gray-700 rounded-full p-2 transition-colors"
+            className="p-1 hover:bg-gray-700 rounded-full p-2 transition-colors cursor-pointer"
             title="Logout"
           >
               <LogOut size={15} />

@@ -153,7 +153,7 @@ export default function ReactionsPanel({ activity }: Props) {
 
   const getReactionStyles = (type: string) => {
     const hasReaction = userReactions.has(type);
-    const baseStyles = "flex items-center space-x-2 text-gray-400 hover:text-red-400 transition-colors";
+    const baseStyles = "flex items-center space-x-2 text-gray-400 hover:text-red-400 cursor-pointer transition-colors";
     
     switch (type) {
       case 'like':
@@ -192,7 +192,7 @@ export default function ReactionsPanel({ activity }: Props) {
         <button
           disabled={loading}
           onClick={handlePin}
-          className={`flex items-center space-x-2 transition-colors ${
+          className={`flex items-center space-x-2 transition-colors cursor-pointer ${
             isPinned 
               ? 'text-blue-400' 
               : 'text-gray-400 hover:text-blue-400'
@@ -200,14 +200,13 @@ export default function ReactionsPanel({ activity }: Props) {
           title={isPinned ? 'Unpin' : 'Pin'}
         >
           <Pin className={`w-5 h-5 ${isPinned ? 'fill-current' : ''}`} />
-          <span className="text-sm">Pin</span>
         </button>
 
         {/* Bookmark */}
         <button
           disabled={loading}
           onClick={handleBookmark}
-          className={`flex items-center space-x-2 transition-colors ${
+          className={`flex items-center space-x-2 transition-colors cursor-pointer ${
             isBookmarked 
               ? 'text-blue-400' 
               : 'text-gray-400 hover:text-blue-400'
@@ -215,7 +214,6 @@ export default function ReactionsPanel({ activity }: Props) {
           title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
         >
           <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
-          <span className="text-sm">Bookmark</span>
         </button>
       </div>
     </div>

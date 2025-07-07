@@ -69,17 +69,15 @@ export function useFeedActivities() {
         }
 
         // Set up subscriptions for both feeds
-        timelineUnsubscribe = timeline.state.subscribeWithSelector(
-          (state) => state.activities || [],
-          (newActivities) => {
-            setTimelineActivities(newActivities);
+        timelineUnsubscribe = timeline.state.subscribe(
+          (state) => {
+            setTimelineActivities(state.activities || []);
           }
         );
 
-        userUnsubscribe = user.state.subscribeWithSelector(
-          (state) => state.activities || [],
-          (newActivities) => {
-            setUserActivities(newActivities);
+        userUnsubscribe = user.state.subscribe(
+          (state) => {
+            setUserActivities(state.activities || []);
           }
         );
 

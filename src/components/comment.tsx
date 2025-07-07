@@ -6,7 +6,7 @@ import {
   ActivityResponse,
   CommentResponse,
 } from '@stream-io/feeds-client';
-import { Heart, Trash2 } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { filterCommentsForActivity } from '../utils/utils';
 import { Avatar } from './avatar';
 
