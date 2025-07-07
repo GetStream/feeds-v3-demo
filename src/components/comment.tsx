@@ -94,13 +94,13 @@ export default function CommentsPanel({
   };
 
   return (
-    <div className="mt-4 border-t border-gray-600 pt-4" data-activity-id={activity.id}>
+    <div className="mt-4 border-t border-gray-800 pt-4" data-activity-id={activity.id}>
       {/* Comment Input Section */}
       {showCommentInput ? (
         <div className="mb-4">
           <div className="flex items-start gap-3">
             <Avatar 
-              userId={activity.user?.id}
+              userName={activity.user?.name}
               size="sm"
             />
             <div className="flex-1">
@@ -108,7 +108,7 @@ export default function CommentsPanel({
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
-                className="w-full rounded-lg bg-gray-700 text-white p-3 text-sm border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full rounded-lg bg-gray-700 text-white p-3 text-sm border border-gray-600 resize-none"
                 rows={3}
                 autoFocus
                 onKeyDown={(e) => {
@@ -172,13 +172,13 @@ export default function CommentsPanel({
               className="flex gap-3 p-3 rounded-lg hover:bg-zinc-800 transition-colors"
             >
               <Avatar 
-                userId={comment.user?.id}
+                userName={comment.user.name}
                 size="sm"
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-semibold text-gray-100 text-sm">
-                    {comment.user?.id || 'unknown'}
+                    {comment.user?.name || 'unknown'}
                   </span>
                   <span className="text-gray-400 text-xs">•</span>
                   <span className="text-gray-400 text-xs">

@@ -5,7 +5,7 @@ import { WhoToFollow } from '../components/whotofollow';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen bg-black">
+    <main className="grid grid-cols-[280px_auto_350px] gap-5 min-h-screen bg-black mx-auto w-[1280px]">
       {/* Sidebar */}
       <div className="flex-[0.25] border-r border-gray-800">
         <Sidebar />
@@ -23,7 +23,7 @@ export default function Home() {
         
         {/* Feed Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto p-4">
+          <div className="max-w-2xl mx-auto">
             <FeedView />
           </div>
         </div>
@@ -32,7 +32,7 @@ export default function Home() {
       {/* Right Sidebar */}
       <div className="flex-[0.3] hidden xl:block p-4 border-l border-gray-800">
         <div className="sticky top-4">
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-gray-800">
+          <div className="bg-zinc-900 rounded-2xl p-4">
             <h2 className="text-lg font-semibold text-white mb-4">What's happening?</h2>
             <div className="space-y-4">
               <div className="p-4 bg-zinc-800 rounded-xl">

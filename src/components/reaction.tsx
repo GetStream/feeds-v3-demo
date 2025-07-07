@@ -4,7 +4,7 @@
 
 import { useUser } from '@/contexts/stream';
 import { ActivityResponse, FeedsClient } from '@stream-io/feeds-client';
-import { Heart, Bookmark, Pin } from 'lucide-react';
+import { Heart, Bookmark, Pin, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 type Props = {
@@ -168,8 +168,15 @@ export default function ReactionsPanel({ activity }: Props) {
   };
 
   return (
-    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+    <div className="flex items-center justify-between mt-4 pt-4">
       <div className="flex items-center space-x-6">
+      <button
+          title="Comments"
+          className={getReactionStyles('messages')}
+        >
+          <MessageCircle className="w-5 h-5" />
+          <span className="text-sm">0</span>
+        </button>
         {/* Like/Heart */}
         <button
           disabled={loading}

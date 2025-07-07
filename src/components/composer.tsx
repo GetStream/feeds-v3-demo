@@ -29,7 +29,7 @@ export function Composer({ onPost }: ComposerProps) {
   const isNearLimit = characterCount > maxLength * 0.9;
 
   return (
-    <form onSubmit={handleSubmit} className="border border-gray-700 rounded-xl p-4 shadow-sm mb-4 bg-zinc-900">
+    <form onSubmit={handleSubmit} className="rounded-xl p-4 shadow-sm mb-4 bg-zinc-900">
       <div className="flex items-start space-x-3">
         <Avatar 
           userName={user?.name}

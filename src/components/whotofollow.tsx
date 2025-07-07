@@ -7,7 +7,7 @@ export function WhoToFollow() {
     const {  whoToFollow } = useWhoToFollow();
 
     return (
-          <div className="bg-zinc-900 rounded-2xl p-6 border border-gray-800 mt-4">
+          <div className="bg-zinc-900 rounded-2xl p-4 mt-4">
             <h2 className="text-lg font-semibold text-white mb-4">Who to follow</h2>
             {whoToFollow.map(user=><div key={user.id} className="space-y-4 my-5">
               <div className="flex items-center justify-between">

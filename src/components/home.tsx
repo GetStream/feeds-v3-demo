@@ -122,7 +122,7 @@ export default function FeedView() {
           {activities.map((activity) => (
             <article
               key={activity.id}
-              className="border border-gray-700 rounded-xl p-6 shadow-sm bg-zinc-900 hover:bg-zinc-800 transition-colors"
+              className="border-b border-gray-800 shadow-sm mb-15 transition-colors"
             >
               <div className="flex items-start space-x-3 mb-4">
                 <UserAvatar userId={activity.user?.name || 'unknown'} />
