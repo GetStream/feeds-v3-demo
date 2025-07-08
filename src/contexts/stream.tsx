@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { FeedsClient } from '@stream-io/feeds-client';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { FeedsClient } from "@stream-io/feeds-client";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 const baseUrl = process.env.NEXT_PUBLIC_FEEDS_BASE_URL!;
@@ -36,14 +42,14 @@ export function StreamProvider({ children }: { children: ReactNode }) {
 
   // Initialize user from localStorage only once
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const userData: User = JSON.parse(storedUser);
         setUser(userData);
       } catch (err) {
-        console.error('Failed to parse stored user:', err);
-        localStorage.removeItem('user');
+        console.error("Failed to parse stored user:", err);
+        localStorage.removeItem("user");
       }
     }
     setLoading(false);
@@ -78,15 +84,15 @@ export function StreamProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
-      const res = await fetch('/api/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+      const res = await fetch("/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userData.id, name: userData.name }),
       });
 
       if (!res.ok) {
-        console.error('Failed to get authentication token');
+        console.error("Failed to get authentication token");
         return;
       }
 
@@ -97,8 +103,10 @@ export function StreamProvider({ children }: { children: ReactNode }) {
       setClient(c);
       setShowUserModal(false);
     } catch (err) {
-      console.error('Error initializing client:', err);
-      setError('Failed to connect to feed service. Please try refreshing the page.');
+      console.error("Error initializing client:", err);
+      setError(
+        "Failed to connect to feed service. Please try refreshing the page."
+      );
     } finally {
       setLoading(false);
     }
@@ -106,13 +114,13 @@ export function StreamProvider({ children }: { children: ReactNode }) {
 
   const updateUser = (userData: User) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const clearUser = () => {
     setUser(null);
     setClient(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
   };
 
   const createUser = async (name: string) => {
@@ -123,17 +131,17 @@ export function StreamProvider({ children }: { children: ReactNode }) {
       // Generate random suffix for user ID
       const randomSuffix = Math.random().toString(36).substring(2, 8);
       const userId = `user-${randomSuffix}`;
-      
+
       const userData: User = {
         id: userId,
-        name: name
+        name: name,
       };
 
       await connectUser(userData);
       updateUser(userData);
     } catch (err) {
-      console.error('Error creating user:', err);
-      setError('Failed to create user profile. Please try again.');
+      console.error("Error creating user:", err);
+      setError("Failed to create user profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -147,9 +155,9 @@ export function StreamProvider({ children }: { children: ReactNode }) {
 
   const getUserInitials = (userName: string) => {
     return userName
-      .split(' ')
-      .map(name => name.charAt(0))
-      .join('')
+      .split(" ")
+      .map((name) => name.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -169,16 +177,14 @@ export function StreamProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <StreamContext.Provider value={value}>
-      {children}
-    </StreamContext.Provider>
+    <StreamContext.Provider value={value}>{children}</StreamContext.Provider>
   );
 }
 
 export function useUser() {
   const context = useContext(StreamContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a StreamProvider');
+    throw new Error("useUser must be used within a StreamProvider");
   }
   return context;
-} 
+}

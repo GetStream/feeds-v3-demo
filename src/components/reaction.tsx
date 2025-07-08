@@ -1,11 +1,11 @@
 // components/ReactionsPanel.tsx
 
-'use client';
+"use client";
 
-import { useUser } from '@/contexts/stream';
-import { ActivityResponse, FeedsClient } from '@stream-io/feeds-client';
-import { Heart, Bookmark, Pin, MessageCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useUser } from "@/contexts/stream";
+import { ActivityResponse, FeedsClient } from "@stream-io/feeds-client";
+import { Heart, Bookmark, Pin, MessageCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 
 type Props = {
   activity: ActivityResponse;
@@ -14,13 +14,15 @@ type Props = {
 export default function ReactionsPanel({ activity }: Props) {
   const [loading, setLoading] = useState(false);
   const [userReactions, setUserReactions] = useState<Set<string>>(new Set());
-  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({});
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>(
+    {}
+  );
   const [isPinned, setIsPinned] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const { user, client } = useUser();
   useEffect(() => {
     if (!user) return;
-    
+
     // Update reaction counts from activity
     const counts: Record<string, number> = {};
     const userReacts = new Set<string>();
@@ -41,12 +43,14 @@ export default function ReactionsPanel({ activity }: Props) {
 
     // Check if activity is pinned by current user
     // Look for pinned activities in the activity data
-    const isPinnedByUser = (activity as any).pinned_activities?.some(
-      (pinned: any) => pinned.user?.id === user.id
-    ) || false;
+    const isPinnedByUser =
+      (activity as any).pinned_activities?.some(
+        (pinned: any) => pinned.user?.id === user.id
+      ) || false;
 
     // Check if activity is bookmarked by current user
-    const isBookmarkedByUser = (activity as any).own_bookmarks?.length > 0 || false;
+    const isBookmarkedByUser =
+      (activity as any).own_bookmarks?.length > 0 || false;
 
     setReactionCounts(counts);
     setUserReactions(userReacts);
@@ -56,24 +60,24 @@ export default function ReactionsPanel({ activity }: Props) {
 
   const handleReaction = async (type: string) => {
     if (loading || !client) return;
-    
+
     try {
       setLoading(true);
-      
+
       if (userReactions.has(type)) {
         // Delete existing reaction
         await client.deleteActivityReaction({
           activity_id: activity.id,
           type,
         });
-        setUserReactions(prev => {
+        setUserReactions((prev) => {
           const newSet = new Set(prev);
           newSet.delete(type);
           return newSet;
         });
-        setReactionCounts(prev => ({
+        setReactionCounts((prev) => ({
           ...prev,
-          [type]: Math.max(0, (prev[type] || 0) - 1)
+          [type]: Math.max(0, (prev[type] || 0) - 1),
         }));
       } else {
         // Add new reaction
@@ -81,14 +85,14 @@ export default function ReactionsPanel({ activity }: Props) {
           activity_id: activity.id,
           type,
         });
-        setUserReactions(prev => new Set([...prev, type]));
-        setReactionCounts(prev => ({
+        setUserReactions((prev) => new Set([...prev, type]));
+        setReactionCounts((prev) => ({
           ...prev,
-          [type]: (prev[type] || 0) + 1
+          [type]: (prev[type] || 0) + 1,
         }));
       }
     } catch (err) {
-      console.error('Failed to handle reaction', err);
+      console.error("Failed to handle reaction", err);
     } finally {
       setLoading(false);
     }
@@ -96,27 +100,27 @@ export default function ReactionsPanel({ activity }: Props) {
 
   const handlePin = async () => {
     if (loading || !client || !user) return;
-    
+
     try {
       setLoading(true);
-      
+
       if (isPinned) {
         await client.unpinActivity({
-          feed_group_id: 'user',
+          feed_group_id: "user",
           feed_id: user.id,
           activity_id: activity.id,
         });
         setIsPinned(false);
       } else {
         await client.pinActivity({
-          feed_group_id: 'user',
+          feed_group_id: "user",
           feed_id: user.id,
           activity_id: activity.id,
         });
         setIsPinned(true);
       }
     } catch (err) {
-      console.error('Failed to handle pin', err);
+      console.error("Failed to handle pin", err);
     } finally {
       setLoading(false);
     }
@@ -124,10 +128,10 @@ export default function ReactionsPanel({ activity }: Props) {
 
   const handleBookmark = async () => {
     if (loading || !client) return;
-    
+
     try {
       setLoading(true);
-      
+
       if (isBookmarked) {
         // Delete bookmark - we need to delete the specific bookmark
         const bookmarks = (activity as any).own_bookmarks || [];
@@ -145,7 +149,7 @@ export default function ReactionsPanel({ activity }: Props) {
         setIsBookmarked(true);
       }
     } catch (err) {
-      console.error('Failed to handle bookmark', err);
+      console.error("Failed to handle bookmark", err);
     } finally {
       setLoading(false);
     }
@@ -153,11 +157,12 @@ export default function ReactionsPanel({ activity }: Props) {
 
   const getReactionStyles = (type: string) => {
     const hasReaction = userReactions.has(type);
-    const baseStyles = "flex items-center space-x-2 text-gray-400 hover:text-red-400 cursor-pointer transition-colors";
-    
+    const baseStyles =
+      "flex items-center space-x-2 text-gray-400 hover:text-red-400 cursor-pointer transition-colors";
+
     switch (type) {
-      case 'like':
-        return `${baseStyles} ${hasReaction ? 'text-red-400' : ''}`;
+      case "like":
+        return `${baseStyles} ${hasReaction ? "text-red-400" : ""}`;
       default:
         return baseStyles;
     }
@@ -170,22 +175,23 @@ export default function ReactionsPanel({ activity }: Props) {
   return (
     <div className="flex items-center justify-between mt-4 pt-4">
       <div className="flex items-center space-x-6">
-      <button
-          title="Comments"
-          className={getReactionStyles('messages')}
-        >
+        <button title="Comments" className={getReactionStyles("messages")}>
           <MessageCircle className="w-5 h-5" />
           <span className="text-sm">0</span>
         </button>
         {/* Like/Heart */}
         <button
           disabled={loading}
-          onClick={() => handleReaction('like')}
-          className={getReactionStyles('like')}
-          title={userReactions.has('like') ? 'Unlike' : 'Like'}
+          onClick={() => handleReaction("like")}
+          className={getReactionStyles("like")}
+          title={userReactions.has("like") ? "Unlike" : "Like"}
         >
-          <Heart className={`w-5 h-5 ${userReactions.has('like') ? 'fill-current' : ''}`} />
-          <span className="text-sm">{reactionCount('like')}</span>
+          <Heart
+            className={`w-5 h-5 ${
+              userReactions.has("like") ? "fill-current" : ""
+            }`}
+          />
+          <span className="text-sm">{reactionCount("like")}</span>
         </button>
 
         {/* Pin */}
@@ -193,13 +199,11 @@ export default function ReactionsPanel({ activity }: Props) {
           disabled={loading}
           onClick={handlePin}
           className={`flex items-center space-x-2 transition-colors cursor-pointer ${
-            isPinned 
-              ? 'text-blue-400' 
-              : 'text-gray-400 hover:text-blue-400'
+            isPinned ? "text-blue-400" : "text-gray-400 hover:text-blue-400"
           }`}
-          title={isPinned ? 'Unpin' : 'Pin'}
+          title={isPinned ? "Unpin" : "Pin"}
         >
-          <Pin className={`w-5 h-5 ${isPinned ? 'fill-current' : ''}`} />
+          <Pin className={`w-5 h-5 ${isPinned ? "fill-current" : ""}`} />
         </button>
 
         {/* Bookmark */}
@@ -207,13 +211,13 @@ export default function ReactionsPanel({ activity }: Props) {
           disabled={loading}
           onClick={handleBookmark}
           className={`flex items-center space-x-2 transition-colors cursor-pointer ${
-            isBookmarked 
-              ? 'text-blue-400' 
-              : 'text-gray-400 hover:text-blue-400'
+            isBookmarked ? "text-blue-400" : "text-gray-400 hover:text-blue-400"
           }`}
-          title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          title={isBookmarked ? "Remove bookmark" : "Bookmark"}
         >
-          <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+          <Bookmark
+            className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+          />
         </button>
       </div>
     </div>

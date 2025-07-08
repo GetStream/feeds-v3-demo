@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useUser } from './stream';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { useUser } from "./stream";
 
 interface FollowersContextType {
   followers: string[];
@@ -12,7 +18,9 @@ interface FollowersContextType {
   removeFollower: (userId: string) => void;
 }
 
-const FollowersContext = createContext<FollowersContextType | undefined>(undefined);
+const FollowersContext = createContext<FollowersContextType | undefined>(
+  undefined
+);
 
 export function FollowersProvider({ children }: { children: ReactNode }) {
   const { user, client } = useUser();
@@ -30,17 +38,17 @@ export function FollowersProvider({ children }: { children: ReactNode }) {
       const response = await client.queryFollows({
         filter: {
           source_feed: `timeline:${user.id}`,
-        }
+        },
       });
 
-      const followerIds = response.follows.map(follow => 
-        follow.target_feed.id
+      const followerIds = response.follows.map(
+        (follow) => follow.target_feed.id
       );
-      
+
       setFollowers(followerIds);
     } catch (err) {
-      console.error('Error fetching followers:', err);
-      setError('Failed to load followers');
+      console.error("Error fetching followers:", err);
+      setError("Failed to load followers");
     } finally {
       setLoading(false);
     }
@@ -57,11 +65,11 @@ export function FollowersProvider({ children }: { children: ReactNode }) {
   };
 
   const addFollower = (userId: string) => {
-    setFollowers(prev => [...prev, userId]);
+    setFollowers((prev) => [...prev, userId]);
   };
 
   const removeFollower = (userId: string) => {
-    setFollowers(prev => prev.filter(id => id !== userId));
+    setFollowers((prev) => prev.filter((id) => id !== userId));
   };
 
   const value: FollowersContextType = {
@@ -83,7 +91,7 @@ export function FollowersProvider({ children }: { children: ReactNode }) {
 export function useFollowers() {
   const context = useContext(FollowersContext);
   if (context === undefined) {
-    throw new Error('useFollowers must be used within a FollowersProvider');
+    throw new Error("useFollowers must be used within a FollowersProvider");
   }
   return context;
-} 
+}

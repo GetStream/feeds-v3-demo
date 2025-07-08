@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Send, Image, Smile } from 'lucide-react';
-import { useUser } from '../contexts/stream';
-import { Avatar } from './avatar';
+import { useState } from "react";
+import { Send, Image, Smile } from "lucide-react";
+import { useUser } from "../contexts/stream";
+import { Avatar } from "./avatar";
 
 interface ComposerProps {
   onPost: (text: string) => Promise<void>;
 }
 
 export function Composer({ onPost }: ComposerProps) {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const maxLength = 280; // Twitter-like character limit
   const { user, getUserInitials } = useUser();
@@ -20,7 +20,7 @@ export function Composer({ onPost }: ComposerProps) {
     if (!text.trim() || text.length > maxLength) return;
     setLoading(true);
     await onPost(text.trim());
-    setText('');
+    setText("");
     setLoading(false);
   };
 
@@ -29,23 +29,22 @@ export function Composer({ onPost }: ComposerProps) {
   const isNearLimit = characterCount > maxLength * 0.9;
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl p-4 shadow-sm mb-4 bg-zinc-900">
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-xl p-4 shadow-sm mb-4 bg-zinc-900"
+    >
       <div className="flex items-start space-x-3">
-        <Avatar 
-          userName={user?.name}
-          userId={user?.id}
-          size="md"
-        />
+        <Avatar userName={user?.name} userId={user?.id} size="md" />
         <div className="flex-1">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="What's happening?"
             rows={3}
-            className="w-full p-3 border-0 bg-transparent text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-0 text-lg"
+            className="w-full p-3 border-0 bg-transparent text-white placeholder-gray-400 resize-none !outline-none text-lg"
             disabled={loading}
           />
-          
+
           <div className="flex items-center justify-between pt-3 border-t border-gray-700">
             <div className="flex items-center space-x-2">
               <button
@@ -63,11 +62,27 @@ export function Composer({ onPost }: ComposerProps) {
                 <Smile className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${isOverLimit ? 'bg-red-500' : isNearLimit ? 'bg-yellow-500' : 'bg-green-500'}`} />
-                <span className={`text-sm ${isOverLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-gray-400'}`}>
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isOverLimit
+                      ? "bg-red-500"
+                      : isNearLimit
+                      ? "bg-yellow-500"
+                      : "bg-green-500"
+                  }`}
+                />
+                <span
+                  className={`text-sm ${
+                    isOverLimit
+                      ? "text-red-400"
+                      : isNearLimit
+                      ? "text-yellow-400"
+                      : "text-gray-400"
+                  }`}
+                >
                   {characterCount}/{maxLength}
                 </span>
               </div>
