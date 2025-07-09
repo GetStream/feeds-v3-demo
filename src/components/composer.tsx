@@ -12,6 +12,7 @@ interface ComposerProps {
 export function Composer({ onPost }: ComposerProps) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const maxLength = 280; // Twitter-like character limit
   const { user, getUserInitials } = useUser();
 
@@ -31,7 +32,9 @@ export function Composer({ onPost }: ComposerProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl p-4 shadow-sm mb-4 bg-zinc-900"
+      className={`rounded-xl p-4 shadow-sm mb-4 border border-transparent ${
+        isActive ? "border-zinc-500" : "bg-zinc-900"
+      }`}
     >
       <div className="flex items-start space-x-3">
         <Avatar userName={user?.name} userId={user?.id} size="md" />
@@ -41,6 +44,8 @@ export function Composer({ onPost }: ComposerProps) {
             onChange={(e) => setText(e.target.value)}
             placeholder="What's happening?"
             rows={3}
+            onFocus={() => setIsActive(true)}
+            onBlur={() => setIsActive(false)}
             className="w-full p-3 border-0 bg-transparent text-white placeholder-gray-400 resize-none !outline-none text-lg"
             disabled={loading}
           />

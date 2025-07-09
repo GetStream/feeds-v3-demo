@@ -1,0 +1,11 @@
+{
+  "version": "v1",
+  "packages": {
+    "@stream-io/feeds-client": {
+      "version": "0.0.1",
+      "signature": "d95c94c3233f2247de7d4b4ad9bbb80d",
+      "file": true,
+      "replaced": "https://github.com/GetStream/stream-feeds-js.git#workspace=@stream-io/feeds-client"
+    }
+  }
+}

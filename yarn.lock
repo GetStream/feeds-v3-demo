@@ -1152,8 +1152,8 @@ __metadata:
   linkType: hard
 
 "@stream-io/feeds-client@https://github.com/GetStream/stream-feeds-js.git#workspace=@stream-io/feeds-client":
-  version: 0.0.0
-  resolution: "@stream-io/feeds-client@https://github.com/GetStream/stream-feeds-js.git#workspace=%40stream-io%2Ffeeds-client&commit=b0cd5f40e02e9909e1248ed378da46d49633800e"
+  version: 0.2.0
+  resolution: "@stream-io/feeds-client@https://github.com/GetStream/stream-feeds-js.git#workspace=%40stream-io%2Ffeeds-client&commit=c4f82f237f29441c1525b72f4bc36dac309a98a7"
   dependencies:
     "@rollup/plugin-replace": "npm:^6.0.1"
     "@rollup/plugin-typescript": "npm:^12.1.0"
@@ -1174,7 +1174,7 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 10c0/a2e07225725a871c9732c31dc7c44b977bc4bea0e495c8117977d9b0e746b49cc5b3c9c36c035dd733c7446392bfae6ff81fbc5f746f2ee2232edda41c2a5d52
+  checksum: 10c0/79056a2f1ec6a8a0bb0574723e82944a28c82bb97d49a16ea6a4de09e30c479ea0c3b4b74d20e7ea650dffa9e58ee632f43c4e93097c20cf5035584cc65d2fd8
   languageName: node
   linkType: hard
 
