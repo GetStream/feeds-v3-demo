@@ -13,7 +13,7 @@ export function useWhoToFollow() {
       try {
         // First, get the feed IDs for user feeds
         const response = await client.getFollowSuggestions({
-          feed_group_id: "timeline",
+          feed_group_id: "user",
           limit: 10,
         });
 
