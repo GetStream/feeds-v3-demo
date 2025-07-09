@@ -6,11 +6,11 @@ import { ActivityResponse, CommentResponse } from "@stream-io/feeds-client";
 import { Heart, MessageCircleReply, Trash2 } from "lucide-react";
 import { filterCommentsForActivity } from "../utils/utils";
 import { Avatar } from "./avatar";
+import { useUser } from "../contexts/stream";
 
 interface CommentsPanelProps {
   activity: ActivityResponse;
   allComments: CommentResponse[];
-  currentUserId: string;
   addComment: (
     objectId: string,
     comment: string,
@@ -28,7 +28,6 @@ interface CommentsPanelProps {
 export default function CommentsPanel({
   activity,
   allComments,
-  currentUserId,
   addComment,
   deleteComment,
   toggleCommentReaction,
@@ -37,6 +36,7 @@ export default function CommentsPanel({
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
+  const { user } = useUser();
 
   // Filter comments for this specific activity
   const comments = filterCommentsForActivity(allComments, activity.id);
@@ -64,7 +64,7 @@ export default function CommentsPanel({
 
   const handleReactToComment = async (commentId: string, type: string) => {
     try {
-      await toggleCommentReaction(commentId, type, currentUserId);
+      await toggleCommentReaction(commentId, type, user?.id);
       // Notify parent to refresh comments
       onCommentReactionUpdated?.();
     } catch (err) {
@@ -85,7 +85,7 @@ export default function CommentsPanel({
     type: string
   ) => {
     return comment.latest_reactions?.find(
-      (reaction) => reaction.user.id === currentUserId && reaction.type === type
+      (reaction) => reaction.user.id === user?.id && reaction.type === type
     );
   };
 
@@ -112,7 +112,7 @@ export default function CommentsPanel({
       {showCommentInput ? (
         <div className="mb-4">
           <div className="flex items-start gap-3">
-            <Avatar userName={activity.user?.name} size="sm" />
+            <Avatar userName={user?.name} size="sm" />
             <div className="flex-1">
               <textarea
                 value={newComment}
@@ -224,7 +224,7 @@ export default function CommentsPanel({
                   <button className="cursor-pointer transition-colors text-sm hover:bg-gray-500 px-2 py-1 rounded-md flex items-center gap-1">
                     <MessageCircleReply className="w-4 h-4" /> Reply
                   </button>
-                  {comment.user?.id === currentUserId && (
+                  {comment.user?.id === user?.id && (
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
                       className="text-red-400 hover:text-white transition-colors text-sm cursor-pointer hover:bg-red-500 px-2 py-1 rounded-md flex items-center gap-1"

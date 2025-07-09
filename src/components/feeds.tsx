@@ -172,7 +172,6 @@ export default function FeedView() {
               <CommentsPanel
                 activity={activity}
                 allComments={comments}
-                currentUserId={user?.id || ""}
                 addComment={addComment}
                 deleteComment={deleteComment}
                 toggleCommentReaction={toggleCommentReaction}
