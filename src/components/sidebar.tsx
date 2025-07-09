@@ -11,18 +11,22 @@ import {
 import { useUser } from "../contexts/stream";
 import { Avatar } from "./avatar";
 import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const sidebarItems = [
-  { icon: MdHome, label: "Home", active: true },
-  { icon: MdSearch, label: "Explore" },
-  { icon: MdNotificationsNone, label: "Notifications" },
-  { icon: MdBookmarkBorder, label: "Bookmarks" },
-  { icon: MdTrendingUp, label: "Trending" },
-  { icon: MdPerson, label: "Profile" },
+  { icon: MdHome, label: "Home", href: "/" },
+  { icon: MdSearch, label: "Explore", href: "/explore" },
+  { icon: MdNotificationsNone, label: "Notifications", href: "/notifications" },
+  { icon: MdBookmarkBorder, label: "Bookmarks", href: "/bookmarks" },
+  { icon: MdTrendingUp, label: "Trending", href: "/trending" },
+  { icon: MdPerson, label: "Profile", href: "/profile" },
 ];
 
 export default function Sidebar() {
-  const { user, getUserInitials, clearUser } = useUser();
+  const { user, clearUser } = useUser();
+  const pathname = usePathname();
+
   return (
     <div className="flex flex-col items-start justify-between flex-[0.2] p-4 min-w-[250px] h-screen space-y-2 sticky top-0">
       <div>
@@ -32,18 +36,19 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation Items */}
-        {sidebarItems.map(({ icon: Icon, label, active }) => (
-          <div
+        {sidebarItems.map(({ icon: Icon, label, href }) => (
+          <Link
+            href={href}
             key={label}
             className={`flex items-center space-x-2 py-3 px-4 my-3 rounded-full cursor-pointer transition-all duration-200 w-full ${
-              active
+              href === pathname
                 ? "bg-blue-500 text-white shadow-lg"
                 : "text-gray-300 hover:bg-gray-800 hover:text-white"
             }`}
           >
             <Icon className="text-2xl" />
             <span className="text-xl font-medium">{label}</span>
-          </div>
+          </Link>
         ))}
       </div>
 

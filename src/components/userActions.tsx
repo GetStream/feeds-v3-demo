@@ -5,6 +5,7 @@ import { UserPlus, UserMinus } from "lucide-react";
 import { useUser } from "../contexts/stream";
 import { useFollowers } from "../contexts/followers";
 import { Avatar } from "./avatar";
+import { useWhoToFollow } from "@/hooks/useWhoToFollow";
 
 interface UserActionsProps {
   targetUserId: string;
@@ -21,6 +22,7 @@ export function UserActions({ targetUserId }: UserActionsProps) {
   const currentUserId = user?.id || "";
   const [loading, setLoading] = useState(false);
   const isFollowing = followers.includes(targetUserId);
+  const { fetchWhoToFollow } = useWhoToFollow();
 
   const handleFollow = async () => {
     if (targetUserId === currentUserId || !client) return;
@@ -43,6 +45,7 @@ export function UserActions({ targetUserId }: UserActionsProps) {
         });
         addFollower(targetUserId);
       }
+      fetchWhoToFollow();
     } catch (err) {
       console.error("Follow/Unfollow error:", err);
     } finally {
