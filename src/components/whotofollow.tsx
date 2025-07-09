@@ -7,19 +7,27 @@ export function WhoToFollow() {
   const { whoToFollow } = useWhoToFollow();
 
   return (
-    <div className="bg-zinc-900 rounded-2xl p-4 mt-4">
+    <div className="bg-zinc-900 rounded-2xl p-4 mt-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
       <h2 className="text-lg font-semibold text-white mb-4">Who to follow</h2>
       {whoToFollow.map((user) => (
         <div key={user.id} className="space-y-4 my-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Avatar userName={user.name} size="md" />
-              <div>
-                <div className="text-white font-medium">{user.name}</div>
-                <div className="text-gray-400 text-xs">@{user.id}</div>
+          <div className="flex items-center justify-between min-w-0">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="flex-shrink-0">
+                <Avatar userName={user.name} size="md" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-white font-medium truncate overflow-hidden whitespace-nowrap">
+                  {user.name || user.id}
+                </div>
+                <div className="text-gray-400 text-xs truncate overflow-hidden whitespace-nowrap">
+                  @{user.id}
+                </div>
               </div>
             </div>
-            <UserActions targetUserId={user.id} />
+            <div className="flex-shrink-0">
+              <UserActions targetUserId={user.id} />
+            </div>
           </div>
         </div>
       ))}

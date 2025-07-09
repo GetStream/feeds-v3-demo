@@ -53,10 +53,10 @@ export default function Sidebar() {
           <Avatar userName={user?.name} userId={user?.id} size="md" />
           <div className="flex-1">
             <div className="text-white font-medium">
-              {user ? user.name : "Unknown User"}
+              {user ? user.name : "..."}
             </div>
             <div className="text-gray-400 text-xs">
-              {user ? `@${user.id}` : "@unknown"}
+              {user ? `@${user.id}` : "@..."}
             </div>
           </div>
           <div

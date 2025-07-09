@@ -130,8 +130,8 @@ export default function FeedView() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-white">
-                        {activity.user?.name}
+                      <span className="font-semibold text-white truncate overflow-hidden whitespace-nowrap max-w-[50%]">
+                        {activity.user?.name || activity.user?.id || "..."}
                       </span>
                       {activity.created_at && (
                         <span className="text-sm text-gray-400">
