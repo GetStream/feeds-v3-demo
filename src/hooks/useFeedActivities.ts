@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Feed, ActivityResponse } from "@stream-io/feeds-client";
-import { useUser } from "../contexts/stream";
+import { useUser } from "./useUser";
+import toast from "react-hot-toast";
 
 export function useFeedActivities() {
   const { client, user } = useUser();
@@ -67,7 +68,7 @@ export function useFeedActivities() {
           if (err.message?.includes("already exists in accepted state")) {
             console.log("Timeline already follows user feed - this is normal");
           } else {
-            console.error("Follow error:", err);
+            toast.error("Follow error:");
           }
         }
 
@@ -90,7 +91,7 @@ export function useFeedActivities() {
         setTimelineFeed(timeline);
         setUserFeed(user);
       } catch (err) {
-        console.error("Error initializing feeds:", err);
+        toast.error("Error initializing feeds");
       } finally {
         setLoading(false);
       }
@@ -114,6 +115,7 @@ export function useFeedActivities() {
         setFeedType(type);
       } catch (err) {
         console.error("Error switching feed type:", err);
+        toast.error("failed to switch feed type");
       } finally {
         setLoading(false);
       }

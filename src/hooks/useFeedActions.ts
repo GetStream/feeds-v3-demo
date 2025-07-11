@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { FeedsClient } from "@stream-io/feeds-client";
-import { useUser } from "../contexts/stream";
+import { useUser } from "./useUser";
+import toast from "react-hot-toast";
 
-export function useFeedActions(
-  showToast: (message: string, type: "success" | "error") => void
-) {
+export function useFeedActions() {
   const { client, user } = useUser();
   const userId = user?.id || "";
   const [posting, setPosting] = useState(false);
@@ -28,10 +26,10 @@ export function useFeedActions(
       const timelineFeed = client.feed("timeline", userId);
       await Promise.all([timelineFeed.getOrCreate(), userFeed.getOrCreate()]);
 
-      showToast("Activity created successfully!", "success");
+      toast.success("Activity created successfully!");
     } catch (err) {
       console.error("Error posting:", err);
-      showToast("Failed to create activity", "error");
+      toast.error("Failed to create activity");
     } finally {
       setPosting(false);
     }
@@ -45,10 +43,10 @@ export function useFeedActions(
         activity_id: activityId,
       });
 
-      showToast("Post deleted successfully", "success");
+      toast.success("Post deleted successfully");
     } catch (err) {
       console.error("Error deleting activity:", err);
-      showToast("Failed to delete post", "error");
+      toast.error("Failed to delete post");
     }
   };
 

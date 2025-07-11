@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useUser } from "@/contexts/stream";
+import { useUser } from "@/hooks/useUser";
 import { ActivityResponse, FeedsClient } from "@stream-io/feeds-client";
 import { Heart, Bookmark, Pin, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -177,7 +177,7 @@ export default function ReactionsPanel({ activity }: Props) {
       <div className="flex items-center space-x-6">
         <button title="Comments" className={getReactionStyles("messages")}>
           <MessageCircle className="w-5 h-5" />
-          <span className="text-sm">0</span>
+          <span className="text-sm">{activity.comments.length}</span>
         </button>
         {/* Like/Heart */}
         <button

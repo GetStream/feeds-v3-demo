@@ -7,5 +7,4 @@ export { Loading } from "./loading";
 export { Error } from "./error";
 export { UserActions, UserAvatar } from "./userActions";
 export { Avatar } from "./avatar";
-export { useToast } from "./toast";
 export { default as UserModal } from "./userModal";

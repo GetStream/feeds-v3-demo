@@ -1,22 +1,17 @@
 "use client";
 
-import { useFeedActivities, useFeedActions, useComments } from "../hooks";
-import { useUser } from "../contexts/stream";
+import { useFeedActivities } from "../hooks";
+import { useUser } from "../hooks/useUser";
 import { Composer } from "./composer";
-import ReactionsPanel from "./reaction";
-import CommentsPanel from "./comment";
+
 import { Loading } from "./loading";
 import { Error } from "./error";
-import { UserActions, UserAvatar } from "./userActions";
-import { useToast } from "./toast";
 import UserModal from "./userModal";
-import { Trash2 } from "lucide-react";
+import Activity from "./activity";
 
 export default function FeedView() {
-  const { showToast, ToastContainer } = useToast();
   const {
     user,
-    client,
     error,
     loading: clientLoading,
     retryConnection,
@@ -29,27 +24,13 @@ export default function FeedView() {
     loading: activitiesLoading,
     switchFeedType,
   } = useFeedActivities();
-  const { posting, handlePost, handleDeleteActivity } =
-    useFeedActions(showToast);
-  const {
-    comments,
-    loading: commentsLoading,
-    error: commentsError,
-    fetchComments,
-    addComment,
-    deleteComment,
-    toggleCommentReaction,
-  } = useComments();
 
-  const loading =
-    (clientLoading || activitiesLoading || commentsLoading) &&
-    !activities.length;
+  const loading = (clientLoading || activitiesLoading) && !activities.length;
 
   // Show user modal if no user is authenticated
   if (!user) {
     return (
       <div>
-        <ToastContainer />
         <UserModal
           isOpen={showUserModal}
           onSubmit={createUser}
@@ -75,8 +56,6 @@ export default function FeedView() {
 
   return (
     <div>
-      <ToastContainer />
-
       {/* User Registration Modal */}
       <UserModal
         isOpen={showUserModal}
@@ -104,7 +83,7 @@ export default function FeedView() {
         </button>
       </div>
 
-      <Composer onPost={handlePost} />
+      <Composer />
 
       {activities.length === 0 ? (
         <div className="text-center py-12">
@@ -121,66 +100,7 @@ export default function FeedView() {
       ) : (
         <div className="space-y-4">
           {activities.map((activity) => (
-            <article
-              key={activity.id}
-              className="border-b border-b-2 border-gray-800 shadow-sm my-15 transition-colors"
-            >
-              <div className="flex items-start space-x-3 mb-4">
-                <UserAvatar userId={activity.user?.name || "unknown"} />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-white truncate overflow-hidden whitespace-nowrap max-w-[50%]">
-                        {activity.user?.name || activity.user?.id || "..."}
-                      </span>
-                      {activity.created_at && (
-                        <span className="text-sm text-gray-400">
-                          {new Date(activity.created_at).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {activity.user?.id && activity.user.id !== user?.id && (
-                        <UserActions targetUserId={activity.user.id} />
-                      )}
-                      {client && activity.user?.id === user?.id && (
-                        <button
-                          onClick={() => handleDeleteActivity(activity.id)}
-                          className="text-red-400 hover:bg-gray-700 rounded-full cursor-pointer transition-colors p-2"
-                          title="Delete activity"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-gray-200 text-lg leading-relaxed">
-                    {activity.text || activity.type}
-                  </p>
-                </div>
-              </div>
-
-              <ReactionsPanel activity={activity} />
-              <CommentsPanel
-                activity={activity}
-                allComments={comments}
-                addComment={addComment}
-                deleteComment={deleteComment}
-                toggleCommentReaction={toggleCommentReaction}
-                onCommentReactionUpdated={() => {
-                  // Refresh comments to get updated reaction state
-                  fetchComments();
-                }}
-              />
-            </article>
+            <Activity key={activity.id} activity={activity} />
           ))}
         </div>
       )}

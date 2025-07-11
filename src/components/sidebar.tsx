@@ -8,7 +8,7 @@ import {
   MdPerson,
   MdTrendingUp,
 } from "react-icons/md";
-import { useUser } from "../contexts/stream";
+import { useUser } from "../hooks/useUser";
 import { Avatar } from "./avatar";
 import { LogOut } from "lucide-react";
 import Link from "next/link";

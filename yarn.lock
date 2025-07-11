@@ -1394,6 +1394,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.82.0":
+  version: 5.82.0
+  resolution: "@tanstack/query-core@npm:5.82.0"
+  checksum: 10c0/8569830a34aad334842dec04338ddbb58a94a77ea7d75995486c4160d29cd1d4b2b4da6c6b82cdb2f8959096ab0b6b97736ade8a7868bfd9934decc0c4ce629f
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.82.0":
+  version: 5.82.0
+  resolution: "@tanstack/react-query@npm:5.82.0"
+  dependencies:
+    "@tanstack/query-core": "npm:5.82.0"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/c73f7974801e6be2833b6c85860c8c3ce86afbd581287497694f79f2d34f502abd7009b3bad141f56781a21cf071383429ae2110500c8d4f7fb5b57ae4fedb64
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:^10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
@@ -2483,7 +2501,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2":
+"csstype@npm:^3.0.2, csstype@npm:^3.1.3":
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10c0/80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
@@ -3333,6 +3351,7 @@ __metadata:
     "@stream-io/node-sdk": "https://github.com/GetStream/stream-node.git#main"
     "@stream-io/node-sdk-feed": "https://github.com/GetStream/stream-node.git#feeds-api"
     "@tailwindcss/postcss": "npm:^4"
+    "@tanstack/react-query": "npm:^5.82.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
@@ -3342,6 +3361,7 @@ __metadata:
     next: "npm:15.3.5"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    react-hot-toast: "npm:^2.5.2"
     react-icons: "npm:^5.5.0"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
@@ -3629,6 +3649,15 @@ __metadata:
     define-properties: "npm:^1.2.1"
     gopd: "npm:^1.0.1"
   checksum: 10c0/9d156f313af79d80b1566b93e19285f481c591ad6d0d319b4be5e03750d004dde40a39a0f26f7e635f9007a3600802f53ecd85a759b86f109e80a5f705e01846
+  languageName: node
+  linkType: hard
+
+"goober@npm:^2.1.16":
+  version: 2.1.16
+  resolution: "goober@npm:2.1.16"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 10c0/f4c8256bf9c27873d47c1443f348779ac7f322516cb80a5dc647a6ebe790ce6bb9d3f487a0fb8be0b583fb96b9b2f6b7463f7fea3cd680306f95fa6fc9db1f6a
   languageName: node
   linkType: hard
 
@@ -5321,6 +5350,19 @@ __metadata:
   peerDependencies:
     react: ^19.1.0
   checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
+  languageName: node
+  linkType: hard
+
+"react-hot-toast@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "react-hot-toast@npm:2.5.2"
+  dependencies:
+    csstype: "npm:^3.1.3"
+    goober: "npm:^2.1.16"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 10c0/2db00b491bd1d2ec3ed04754a32b640272cdb32985f95e32ef033fcc996588a93e67d9764b005f9f391ee2bad5d0f9f343ba290dca82fcd439e08e708a161d76
   languageName: node
   linkType: hard
 

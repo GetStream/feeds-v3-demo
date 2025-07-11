@@ -2,25 +2,23 @@
 
 import { useState } from "react";
 import { Send, Image, Smile } from "lucide-react";
-import { useUser } from "../contexts/stream";
+import { useUser } from "../hooks/useUser";
 import { Avatar } from "./avatar";
+import { useFeedActions } from "@/hooks";
 
-interface ComposerProps {
-  onPost: (text: string) => Promise<void>;
-}
-
-export function Composer({ onPost }: ComposerProps) {
+export function Composer() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const maxLength = 280; // Twitter-like character limit
-  const { user, getUserInitials } = useUser();
+  const { user } = useUser();
+  const { handlePost } = useFeedActions();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim() || text.length > maxLength) return;
     setLoading(true);
-    await onPost(text.trim());
+    await handlePost(text.trim());
     setText("");
     setLoading(false);
   };

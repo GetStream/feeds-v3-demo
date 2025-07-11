@@ -1,238 +1,210 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  FeedsClient,
   CommentResponse,
   AddCommentReactionResponse,
 } from "@stream-io/feeds-client";
-import { useUser } from "../contexts/stream";
+import { useUser } from "./useUser";
+import toast from "react-hot-toast";
+// Add comment to Stream API
+const addCommentToAPI = async (
+  client: any,
+  objectId: string,
+  comment: string,
+  objectType: string = "activity"
+): Promise<CommentResponse> => {
+  const res = await client.addComment({
+    object_id: objectId,
+    object_type: objectType,
+    comment: comment.trim(),
+  });
+  return res.comment;
+};
+
+// Delete comment from Stream API
+const deleteCommentFromAPI = async (
+  client: any,
+  commentId: string
+): Promise<void> => {
+  await client.deleteComment({
+    comment_id: commentId,
+  });
+};
+
+// Add comment reaction to Stream API
+const addCommentReactionToAPI = async (
+  client: any,
+  commentId: string,
+  type: string
+): Promise<AddCommentReactionResponse> => {
+  return await client.addCommentReaction({
+    comment_id: commentId,
+    type,
+  });
+};
+
+// Delete comment reaction from Stream API
+const deleteCommentReactionFromAPI = async (
+  client: any,
+  commentId: string,
+  type: string
+): Promise<void> => {
+  await client.deleteCommentReaction({
+    comment_id: commentId,
+    type,
+  });
+};
 
 export function useComments() {
   const { client } = useUser();
-  const [comments, setComments] = useState<CommentResponse[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  // Load comments automatically when client is available
-  useEffect(() => {
-    const loadComments = async () => {
-      if (!client) return;
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await client.queryComments({
-          filter: {},
-        });
-
-        setComments(res.comments);
-      } catch (err) {
-        console.error("Failed to fetch comments", err);
-        setError("Failed to fetch comments");
-      } finally {
-        setLoading(false);
+  // Mutation for adding comment
+  const addCommentMutation = useMutation({
+    mutationFn: async ({
+      objectId,
+      comment,
+      objectType,
+    }: {
+      objectId: string;
+      comment: string;
+      objectType?: string;
+    }) => {
+      if (!comment.trim() || comment.length > 280) {
+        throw new Error("Comment must be between 1 and 280 characters");
       }
-    };
+      return await addCommentToAPI(client, objectId, comment, objectType);
+    },
+  });
 
-    loadComments();
-  }, [client]);
+  // Mutation for deleting comment
+  const deleteCommentMutation = useMutation({
+    mutationFn: async (commentId: string) => {
+      await deleteCommentFromAPI(client, commentId);
+      return commentId;
+    },
+  });
 
-  const fetchComments = useCallback(async () => {
-    if (!client) return;
+  // Mutation for adding comment reaction
+  const addCommentReactionMutation = useMutation({
+    mutationFn: async ({
+      commentId,
+      type,
+    }: {
+      commentId: string;
+      type: string;
+    }) => {
+      return await addCommentReactionToAPI(client, commentId, type);
+    },
+  });
 
+  // Mutation for deleting comment reaction
+  const deleteCommentReactionMutation = useMutation({
+    mutationFn: async ({
+      commentId,
+      type,
+      userId,
+    }: {
+      commentId: string;
+      type: string;
+      userId: string;
+    }) => {
+      await deleteCommentReactionFromAPI(client, commentId, type);
+      return { commentId, type, userId };
+    },
+  });
+
+  const addComment = async (
+    objectId: string,
+    comment: string,
+    objectType?: string
+  ): Promise<CommentResponse | null> => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const res = await client.queryComments({
-        filter: {},
+      const result = await addCommentMutation.mutateAsync({
+        objectId,
+        comment,
+        objectType,
       });
-
-      setComments(res.comments);
+      return result;
     } catch (err) {
-      console.error("Failed to fetch comments", err);
-      setError("Failed to fetch comments");
-    } finally {
-      setLoading(false);
+      toast.error("Failed to add comment");
+      return null;
     }
-  }, [client]);
+  };
 
-  const addComment = useCallback(
-    async (
-      objectId: string,
-      comment: string,
-      objectType: string = "activity"
-    ) => {
-      if (!client || !comment.trim() || comment.length > 280) return null;
+  const deleteComment = async (commentId: string): Promise<boolean> => {
+    try {
+      await deleteCommentMutation.mutateAsync(commentId);
+      return true;
+    } catch (err) {
+      toast.error("Failed to delete comment");
+      return false;
+    }
+  };
 
-      try {
-        setLoading(true);
-        setError(null);
+  const addCommentReaction = async (
+    commentId: string,
+    type: string
+  ): Promise<boolean> => {
+    try {
+      await addCommentReactionMutation.mutateAsync({ commentId, type });
+      return true;
+    } catch (err) {
+      toast.error("Failed to add comment reaction");
+      return false;
+    }
+  };
 
-        const res = await client.addComment({
-          object_id: objectId,
-          object_type: objectType,
-          comment: comment.trim(),
-        });
+  const deleteCommentReaction = async (
+    commentId: string,
+    type: string,
+    userId: string
+  ): Promise<boolean> => {
+    try {
+      await deleteCommentReactionMutation.mutateAsync({
+        commentId,
+        type,
+        userId,
+      });
+      return true;
+    } catch (err) {
+      toast.error("Failed to delete comment reaction");
+      return false;
+    }
+  };
 
-        setComments((prev) => [...prev, res.comment]);
-        return res.comment;
-      } catch (err) {
-        console.error("Failed to add comment", err);
-        setError("Failed to add comment");
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [client]
-  );
+  const toggleCommentReaction = async (
+    commentId: string,
+    type: string,
+    hasReaction: boolean,
+    userId?: string
+  ): Promise<boolean> => {
+    if (!userId) return false;
 
-  const deleteComment = useCallback(
-    async (commentId: string) => {
-      if (!client) return false;
+    if (hasReaction) {
+      return await deleteCommentReaction(commentId, type, userId);
+    } else {
+      return await addCommentReaction(commentId, type);
+    }
+  };
 
-      try {
-        setLoading(true);
-        setError(null);
-
-        await client.deleteComment({
-          comment_id: commentId,
-        });
-
-        setComments((prev) => prev.filter((c) => c.id !== commentId));
-        return true;
-      } catch (err) {
-        console.error("Failed to delete comment", err);
-        setError("Failed to delete comment");
-        return false;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [client]
-  );
-
-  const addCommentReaction = useCallback(
-    async (commentId: string, type: string) => {
-      if (!client) return false;
-
-      try {
-        setError(null);
-
-        const res: AddCommentReactionResponse = await client.addCommentReaction(
-          {
-            comment_id: commentId,
-            type,
-          }
-        );
-
-        // Refresh comments to get updated reaction state
-        const comment = comments.find((c) => c.id === commentId);
-        if (comment) {
-          const updatedComments = comments.map((c) =>
-            c.id === commentId
-              ? { ...c, latest_reactions: res.comment.latest_reactions }
-              : c
-          );
-          setComments(updatedComments);
-        }
-
-        return true;
-      } catch (err) {
-        console.error("Failed to add comment reaction", err);
-        setError("Failed to add reaction");
-        return false;
-      }
-    },
-    [client, comments]
-  );
-
-  const deleteCommentReaction = useCallback(
-    async (commentId: string, type: string, userId: string) => {
-      if (!client) return false;
-
-      try {
-        setError(null);
-
-        await client.deleteCommentReaction({
-          comment_id: commentId,
-          type,
-        });
-
-        // Refresh comments to get updated reaction state
-        const comment = comments.find((c) => c.id === commentId);
-        if (comment) {
-          const updatedComments = comments.map((c) =>
-            c.id === commentId
-              ? {
-                  ...c,
-                  latest_reactions: c.latest_reactions?.filter(
-                    (r) => !(r.type === type && r.user.id === userId)
-                  ),
-                }
-              : c
-          );
-          setComments(updatedComments);
-        }
-
-        return true;
-      } catch (err) {
-        console.error("Failed to delete comment reaction", err);
-        setError("Failed to remove reaction");
-        return false;
-      }
-    },
-    [client, comments]
-  );
-
-  const toggleCommentReaction = useCallback(
-    async (commentId: string, type: string, userId?: string) => {
-      if (!client || !userId) return false;
-
-      const comment = comments.find((c) => c.id === commentId);
-      if (!comment) return false;
-
-      const hasReaction = comment.latest_reactions?.find(
-        (reaction) => reaction.user.id === userId && reaction.type === type
-      );
-
-      if (hasReaction) {
-        return await deleteCommentReaction(commentId, type, userId);
-      } else {
-        return await addCommentReaction(commentId, type);
-      }
-    },
-    [client, comments, addCommentReaction, deleteCommentReaction]
-  );
-
-  const clearComments = useCallback(() => {
-    setComments([]);
-    setError(null);
-  }, []);
-
-  const getUserReactionForComment = useCallback(
-    (comment: CommentResponse, type: string, userId: string) => {
-      return comment.latest_reactions?.find(
-        (reaction) => reaction.user.id === userId && reaction.type === type
-      );
-    },
-    []
-  );
+  const getUserReactionForComment = (
+    comment: CommentResponse,
+    type: string,
+    userId: string
+  ) => {
+    return comment.latest_reactions?.find(
+      (reaction) => reaction.user.id === userId && reaction.type === type
+    );
+  };
 
   return {
-    comments,
-    loading,
-    error,
-    fetchComments,
     addComment,
     deleteComment,
     addCommentReaction,
     deleteCommentReaction,
     toggleCommentReaction,
-    clearComments,
     getUserReactionForComment,
   };
 }

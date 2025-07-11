@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "../contexts/stream";
+import { useUser } from "../hooks/useUser";
 
 interface AvatarProps {
   userId?: string;

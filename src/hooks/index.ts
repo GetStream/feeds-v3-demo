@@ -1,3 +1,7 @@
 export { useFeedActivities } from "./useFeedActivities";
 export { useFeedActions } from "./useFeedActions";
+export { useUserActions } from "./useUserActions";
+export { useUser } from "./useUser";
+export type { User } from "./useUser";
+export { useFollowers } from "./useFollowers";
 export { useComments } from "./useComments";

@@ -1,63 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { UserPlus, UserMinus } from "lucide-react";
-import { useUser } from "../contexts/stream";
-import { useFollowers } from "../contexts/followers";
+import { useUserActions } from "../hooks/useUserActions";
 import { Avatar } from "./avatar";
-import { useWhoToFollow } from "@/hooks/useWhoToFollow";
 
 interface UserActionsProps {
   targetUserId: string;
 }
 
 export function UserActions({ targetUserId }: UserActionsProps) {
-  const { user, client } = useUser();
-  const {
-    followers,
-    loading: followersLoading,
-    addFollower,
-    removeFollower,
-  } = useFollowers();
-  const currentUserId = user?.id || "";
-  const [loading, setLoading] = useState(false);
-  const isFollowing = followers.includes(targetUserId);
-  const { fetchWhoToFollow } = useWhoToFollow();
+  const { isFollowing, isLoading, isOwnUser, handleFollow } =
+    useUserActions(targetUserId);
 
-  const handleFollow = async () => {
-    if (targetUserId === currentUserId || !client) return;
-
-    try {
-      setLoading(true);
-
-      if (isFollowing) {
-        // Unfollow
-        await client.unfollow({
-          source: `timeline:${currentUserId}`,
-          target: `user:${targetUserId}`,
-        });
-        removeFollower(targetUserId);
-      } else {
-        // Follow
-        await client.follow({
-          source: `timeline:${currentUserId}`,
-          target: `user:${targetUserId}`,
-        });
-        addFollower(targetUserId);
-      }
-      fetchWhoToFollow();
-    } catch (err) {
-      console.error("Follow/Unfollow error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (targetUserId === currentUserId) {
+  if (isOwnUser) {
     return null; // Don't show follow button for own posts
   }
-
-  const isLoading = loading || followersLoading;
 
   return (
     <button

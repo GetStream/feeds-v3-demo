@@ -4,42 +4,21 @@
 import { useEffect, useState } from "react";
 import { ActivityResponse, CommentResponse } from "@stream-io/feeds-client";
 import { Heart, MessageCircleReply, Trash2 } from "lucide-react";
-import { filterCommentsForActivity } from "../utils/utils";
 import { Avatar } from "./avatar";
-import { useUser } from "../contexts/stream";
+import { useUser } from "../hooks/useUser";
+import { useComments } from "../hooks/useComments";
+import toast from "react-hot-toast";
 
 interface CommentsPanelProps {
   activity: ActivityResponse;
-  allComments: CommentResponse[];
-  addComment: (
-    objectId: string,
-    comment: string,
-    objectType?: string
-  ) => Promise<CommentResponse | null>;
-  deleteComment: (commentId: string) => Promise<boolean>;
-  toggleCommentReaction: (
-    commentId: string,
-    type: string,
-    userId?: string
-  ) => Promise<boolean>;
-  onCommentReactionUpdated?: () => void;
 }
 
-export default function CommentsPanel({
-  activity,
-  allComments,
-  addComment,
-  deleteComment,
-  toggleCommentReaction,
-  onCommentReactionUpdated,
-}: CommentsPanelProps) {
+export default function CommentsPanel({ activity }: CommentsPanelProps) {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const { user } = useUser();
-
-  // Filter comments for this specific activity
-  const comments = filterCommentsForActivity(allComments, activity.id);
+  const { addComment, deleteComment, toggleCommentReaction } = useComments();
 
   // Update showCommentInput when showInput prop changes
   useEffect(() => {
@@ -62,13 +41,15 @@ export default function CommentsPanel({
     }
   };
 
-  const handleReactToComment = async (commentId: string, type: string) => {
+  const handleReactToComment = async (
+    comment: CommentResponse,
+    type: string
+  ) => {
     try {
-      await toggleCommentReaction(commentId, type, user?.id);
-      // Notify parent to refresh comments
-      onCommentReactionUpdated?.();
+      const hasReaction = !!getUserReactionForComment(comment, type);
+      await toggleCommentReaction(comment.id, type, hasReaction, user?.id);
     } catch (err) {
-      console.error("Failed to handle comment reaction", err);
+      toast.error("Failed to handle comment reaction");
     }
   };
 
@@ -76,7 +57,7 @@ export default function CommentsPanel({
     try {
       await deleteComment(commentId);
     } catch (err) {
-      console.error("Failed to delete comment", err);
+      toast.error("Failed to delete comment");
     }
   };
 
@@ -84,8 +65,11 @@ export default function CommentsPanel({
     comment: CommentResponse,
     type: string
   ) => {
+    //this is a right way to check if the user has reacted to the comment
+    //return comment.own_reactions.length > 0;
+
     return comment.latest_reactions?.find(
-      (reaction) => reaction.user.id === user?.id && reaction.type === type
+      (reaction) => reaction.type === type && reaction.user.id === user?.id
     );
   };
 
@@ -175,12 +159,12 @@ export default function CommentsPanel({
       )}
 
       {/* Comments List */}
-      {comments.length > 0 && (
+      {activity.comments.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-300 mb-3">
-            Comments ({comments.length})
+            Comments ({activity.comments.length})
           </h3>
-          {comments.map((comment) => (
+          {activity.comments.map((comment) => (
             <div
               key={comment.id}
               className="flex gap-3 p-3 rounded-lg transition-colors"
@@ -202,8 +186,9 @@ export default function CommentsPanel({
                   <div className="flex items-center gap-1">
                     <button
                       title="Like"
+                      data-cid={comment.id}
                       className={getReactionStyles(comment, "like")}
-                      onClick={() => handleReactToComment(comment.id, "like")}
+                      onClick={() => handleReactToComment(comment, "like")}
                     >
                       <Heart
                         className={`w-4 h-4 ${
@@ -239,7 +224,7 @@ export default function CommentsPanel({
         </div>
       )}
 
-      {comments.length === 0 && !showCommentInput && (
+      {activity.comments.length === 0 && !showCommentInput && (
         <div className="text-center py-6 text-gray-400 text-sm">
           No comments yet. Be the first to comment!
         </div>
