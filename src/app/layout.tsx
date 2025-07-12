@@ -36,7 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
       >
         <QueryProvider>
-          <main className="grid grid-cols-[280px_auto_350px] gap-5 min-h-screen bg-black mx-auto w-[1280px]">
+          <main className="grid grid-cols-[270px_auto_350px] gap-5 min-h-screen bg-black mx-auto w-[1280px]">
             {/* Sidebar */}
             <div className="flex-[0.25] border-r border-gray-800">
               <Sidebar />

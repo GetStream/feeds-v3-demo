@@ -13,7 +13,7 @@ import { Avatar } from "./avatar";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import Logo from "@/assets/img/logo.png";
 const sidebarItems = [
   { icon: MdHome, label: "Home", href: "/" },
   { icon: MdSearch, label: "Explore", href: "/explore" },
@@ -28,11 +28,10 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col items-start justify-between flex-[0.2] p-4 min-w-[250px] h-screen space-y-2 sticky top-0">
+    <div className="flex flex-col items-start justify-between flex-[0.2] p-4 h-screen space-y-2 sticky top-0">
       <div>
-        {/* Logo/Brand */}
         <div className="mb-8 px-4">
-          <h1 className="text-2xl font-bold text-blue-500">FeedsApp</h1>
+          <img src={Logo.src} className="h-8" />
         </div>
 
         {/* Navigation Items */}

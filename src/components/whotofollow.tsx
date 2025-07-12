@@ -1,15 +1,22 @@
 "use client";
 import { useWhoToFollow } from "../hooks/useWhoToFollow";
 import { Avatar } from "./avatar";
+import { Loading } from "./loading";
 import { UserActions } from "./userActions";
 
 export function WhoToFollow() {
-  const { whoToFollow } = useWhoToFollow();
+  const { whoToFollow, isLoading } = useWhoToFollow();
 
   return (
     <div className="bg-zinc-900 rounded-2xl p-4 mt-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
       <h2 className="text-lg font-semibold text-white mb-4">Who to follow</h2>
-      {whoToFollow.length ? (
+      {isLoading ? (
+        <div className="text-white">
+          <div>
+            <Loading message="Loading suggestions..." />
+          </div>
+        </div>
+      ) : whoToFollow.length ? (
         <>
           {whoToFollow.map((user) => (
             <div key={user.id} className="space-y-4 my-5">
@@ -36,7 +43,7 @@ export function WhoToFollow() {
         </>
       ) : (
         <div className="text-white">
-          <div>You’re all caught up with your follows!</div>
+          <div>You're all caught up with your follows!</div>
           <div className="text-gray-400 text-xs">
             Keep an eye out for fresh recommendations as the community grows.
           </div>
