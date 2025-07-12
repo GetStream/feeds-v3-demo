@@ -58,7 +58,17 @@ export default function RootLayout({
               </div>
             </div>
           </main>
-          <Toaster />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "rgba(255,255,255,0.1)",
+                color: "white",
+                padding: "15px",
+                backdropFilter: "blur(10px)",
+              },
+            }}
+          />
         </QueryProvider>
       </body>
     </html>

@@ -12,7 +12,7 @@ export default function Activity({ activity }: { activity: ActivityResponse }) {
   const { handleDeleteActivity } = useFeedActions();
 
   return (
-    <article className="border-b border-b-2 border-gray-800 shadow-sm my-15 transition-colors">
+    <article className="border-b border-b-2 border-gray-800 shadow-sm my-15 transition-colors activity">
       <div className="flex items-start space-x-3 mb-4">
         <UserAvatar userId={activity.user?.name || "..."} />
         <div className="flex-1">
@@ -39,7 +39,7 @@ export default function Activity({ activity }: { activity: ActivityResponse }) {
               {activity.user?.id === user?.id && (
                 <button
                   onClick={() => handleDeleteActivity(activity.id)}
-                  className="text-red-400 hover:bg-gray-700 rounded-full cursor-pointer transition-colors p-2"
+                  className="remove-activity text-red-400 hover:bg-gray-700 rounded-full cursor-pointer transition-colors p-2"
                   title="Delete activity"
                 >
                   <Trash2 className="w-4 h-4" />

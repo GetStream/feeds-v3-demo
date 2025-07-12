@@ -1,5 +1,6 @@
 export { useFeedActivities } from "./useFeedActivities";
 export { useFeedActions } from "./useFeedActions";
+export { useFeedManager } from "./useFeedManager";
 export { useUserActions } from "./useUserActions";
 export { useUser } from "./useUser";
 export type { User } from "./useUser";

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useUser } from "./useUser";
 import { useFollowers } from "./useFollowers";
 import toast from "react-hot-toast";
+import { useFeedManager } from "./useFeedManager";
 
 export function useUserActions(targetUserId: string) {
   const { user, client } = useUser();
@@ -11,7 +12,7 @@ export function useUserActions(targetUserId: string) {
     addFollower,
     removeFollower,
   } = useFollowers();
-
+  const { refetchTimeline } = useFeedManager();
   const currentUserId = user?.id || "";
   const [loading, setLoading] = useState(false);
   const isFollowing = followers.includes(targetUserId);
@@ -37,6 +38,7 @@ export function useUserActions(targetUserId: string) {
         });
         addFollower(targetUserId);
       }
+      refetchTimeline();
     } catch (err) {
       toast.error("failed to perform this action");
     } finally {

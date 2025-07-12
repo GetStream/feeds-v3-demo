@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { ActivityResponse, CommentResponse } from "@stream-io/feeds-client";
-import { Heart, MessageCircleReply, Trash2 } from "lucide-react";
+import { Heart, MessageCircleReply, TextQuote, Trash2 } from "lucide-react";
 import { Avatar } from "./avatar";
 import { useUser } from "../hooks/useUser";
 import { useComments } from "../hooks/useComments";
@@ -207,7 +207,7 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
                       )}
                   </div>
                   <button className="cursor-pointer transition-colors text-sm hover:bg-gray-500 px-2 py-1 rounded-md flex items-center gap-1">
-                    <MessageCircleReply className="w-4 h-4" /> Reply
+                    <TextQuote className="w-4 h-4" /> Reply
                   </button>
                   {comment.user?.id === user?.id && (
                     <button
