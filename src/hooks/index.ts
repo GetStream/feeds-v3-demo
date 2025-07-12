@@ -6,3 +6,4 @@ export { useUser } from "./useUser";
 export type { User } from "./useUser";
 export { useFollowers } from "./useFollowers";
 export { useComments } from "./useComments";
+export { useBookmarks } from "./useBookmarks";

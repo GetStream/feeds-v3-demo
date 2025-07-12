@@ -3,7 +3,6 @@
 import { useFeedManager } from "../hooks";
 import { useUser } from "../hooks/useUser";
 import { Composer } from "./composer";
-import { RefreshCw } from "lucide-react";
 
 import { Loading } from "./loading";
 import { Error } from "./error";
@@ -24,9 +23,6 @@ export default function FeedView() {
     feedType,
     loading: activitiesLoading,
     switchFeedType,
-    refetchAllFeeds,
-    refetchTimeline,
-    refetchUser,
   } = useFeedManager();
 
   const loading = (clientLoading || activitiesLoading) && !activities.length;
@@ -106,7 +102,7 @@ export default function FeedView() {
       ) : (
         <div className="space-y-4">
           {activities.map((activity) => (
-            <Activity key={activity.id} activity={activity} />
+            <Activity key={`feed-${activity.id}`} activity={activity} />
           ))}
         </div>
       )}

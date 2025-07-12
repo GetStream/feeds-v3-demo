@@ -13,7 +13,7 @@ export function WhoToFollow() {
       {isLoading ? (
         <div className="text-white">
           <div>
-            <Loading message="Loading suggestions..." />
+            <Loading message="" />
           </div>
         </div>
       ) : whoToFollow.length ? (

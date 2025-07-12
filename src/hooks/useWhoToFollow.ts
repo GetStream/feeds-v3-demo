@@ -5,7 +5,7 @@ import { useUser, User } from "./useUser";
 import { FullUserResponse } from "@stream-io/feeds-client";
 import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
-import { useRef } from "react";
+import { useState, useEffect } from "react";
 
 // Query key for who to follow data
 const WHO_TO_FOLLOW_QUERY_KEY = ["whoToFollow"];
@@ -50,7 +50,7 @@ const fetchWhoToFollowData = async (
 
 export function useWhoToFollow() {
   const { client, user } = useUser();
-  const hasReceivedData = useRef(false);
+  const [loading, setLoading] = useState(true);
 
   const {
     data: whoToFollow = [],
@@ -66,13 +66,12 @@ export function useWhoToFollow() {
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  // Mark that we've received data
-  if (whoToFollow.length > 0 || error) {
-    hasReceivedData.current = true;
-  }
+  //this is a hack to fix the loading state, because the query is not returning the data immediately
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
-  // Custom loading state that's true until we've received data
-  const isLoadingData = !hasReceivedData.current || isLoading;
+  const isLoadingData = loading || isLoading || isFetching;
 
   return {
     whoToFollow,
