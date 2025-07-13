@@ -18,7 +18,7 @@ const fetchPopularActivities = async (
 
   try {
     // Use a public feed for popular activities
-    const popularFeed = client.feed("timeline", user.id);
+    const popularFeed = client.feed("user", user.id);
     const activities = await popularFeed.getOrCreate({
       view: "popular-view",
       external_ranking: {

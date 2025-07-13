@@ -273,14 +273,16 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
                     </span>
                   )}
               </div>
-              <button
-                onClick={() =>
-                  setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                }
-                className="cursor-pointer transition-colors text-sm hover:bg-gray-500 px-2 py-1 rounded-md flex items-center gap-1"
-              >
-                <TextQuote className="w-4 h-4" /> Reply
-              </button>
+              {level === 0 ? (
+                <button
+                  onClick={() =>
+                    setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                  }
+                  className="cursor-pointer transition-colors text-sm hover:bg-gray-500 px-2 py-1 rounded-md flex items-center gap-1"
+                >
+                  <TextQuote className="w-4 h-4" /> Reply
+                </button>
+              ) : null}
               {comment.user?.id === user?.id && (
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
