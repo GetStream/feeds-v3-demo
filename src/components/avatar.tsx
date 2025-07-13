@@ -74,7 +74,7 @@ export function Avatar({
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-full ${colorClass} flex items-center justify-center text-white font-semibold ${className}`}
+      className={`${sizeClasses[size]} rounded-full ${colorClass} relative avatar flex items-center justify-center text-white font-semibold ${className}`}
       title={userName || userId || "..."}
     >
       {initials}

@@ -39,7 +39,7 @@ export function useUserActions(targetUserId: string) {
         addFollower(targetUserId);
       }
       refetchTimeline();
-    } catch (err) {
+    } catch {
       toast.error("failed to perform this action");
     } finally {
       setLoading(false);

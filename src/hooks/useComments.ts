@@ -1,15 +1,16 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   CommentResponse,
   AddCommentReactionResponse,
 } from "@stream-io/feeds-client";
 import { useUser } from "./useUser";
+import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 // Add comment to Stream API
 const addCommentToAPI = async (
-  client: any,
+  client: FeedsClient,
   objectId: string,
   comment: string,
   objectType: string = "activity"
@@ -22,9 +23,26 @@ const addCommentToAPI = async (
   return res.comment;
 };
 
+// Add reply to comment
+const addReplyToAPI = async (
+  client: FeedsClient,
+  objectId: string,
+  comment: string,
+  parentId: string,
+  objectType: string = "activity"
+): Promise<CommentResponse> => {
+  const res = await client.addComment({
+    object_id: objectId,
+    object_type: objectType,
+    parent_id: parentId,
+    comment: comment.trim(),
+  });
+  return res.comment;
+};
+
 // Delete comment from Stream API
 const deleteCommentFromAPI = async (
-  client: any,
+  client: FeedsClient,
   commentId: string
 ): Promise<void> => {
   await client.deleteComment({
@@ -34,7 +52,7 @@ const deleteCommentFromAPI = async (
 
 // Add comment reaction to Stream API
 const addCommentReactionToAPI = async (
-  client: any,
+  client: FeedsClient,
   commentId: string,
   type: string
 ): Promise<AddCommentReactionResponse> => {
@@ -46,7 +64,7 @@ const addCommentReactionToAPI = async (
 
 // Delete comment reaction from Stream API
 const deleteCommentReactionFromAPI = async (
-  client: any,
+  client: FeedsClient,
   commentId: string,
   type: string
 ): Promise<void> => {
@@ -58,7 +76,6 @@ const deleteCommentReactionFromAPI = async (
 
 export function useComments() {
   const { client } = useUser();
-  const queryClient = useQueryClient();
 
   // Mutation for adding comment
   const addCommentMutation = useMutation({
@@ -74,13 +91,48 @@ export function useComments() {
       if (!comment.trim() || comment.length > 280) {
         throw new Error("Comment must be between 1 and 280 characters");
       }
+      if (!client) {
+        throw new Error("Client is not available");
+      }
       return await addCommentToAPI(client, objectId, comment, objectType);
+    },
+  });
+
+  // Mutation for adding reply
+  const addReplyMutation = useMutation({
+    mutationFn: async ({
+      objectId,
+      comment,
+      parentId,
+      objectType,
+    }: {
+      objectId: string;
+      comment: string;
+      parentId: string;
+      objectType?: string;
+    }) => {
+      if (!comment.trim() || comment.length > 280) {
+        throw new Error("Reply must be between 1 and 280 characters");
+      }
+      if (!client) {
+        throw new Error("Client is not available");
+      }
+      return await addReplyToAPI(
+        client,
+        objectId,
+        comment,
+        parentId,
+        objectType
+      );
     },
   });
 
   // Mutation for deleting comment
   const deleteCommentMutation = useMutation({
     mutationFn: async (commentId: string) => {
+      if (!client) {
+        throw new Error("Client is not available");
+      }
       await deleteCommentFromAPI(client, commentId);
       return commentId;
     },
@@ -95,6 +147,9 @@ export function useComments() {
       commentId: string;
       type: string;
     }) => {
+      if (!client) {
+        throw new Error("Client is not available");
+      }
       return await addCommentReactionToAPI(client, commentId, type);
     },
   });
@@ -110,6 +165,9 @@ export function useComments() {
       type: string;
       userId: string;
     }) => {
+      if (!client) {
+        throw new Error("Client is not available");
+      }
       await deleteCommentReactionFromAPI(client, commentId, type);
       return { commentId, type, userId };
     },
@@ -127,8 +185,28 @@ export function useComments() {
         objectType,
       });
       return result;
-    } catch (err) {
+    } catch {
       toast.error("Failed to add comment");
+      return null;
+    }
+  };
+
+  const addReply = async (
+    objectId: string,
+    comment: string,
+    parentId: string,
+    objectType?: string
+  ): Promise<CommentResponse | null> => {
+    try {
+      const result = await addReplyMutation.mutateAsync({
+        objectId,
+        comment,
+        parentId,
+        objectType,
+      });
+      return result;
+    } catch {
+      toast.error("Failed to add reply");
       return null;
     }
   };
@@ -137,7 +215,7 @@ export function useComments() {
     try {
       await deleteCommentMutation.mutateAsync(commentId);
       return true;
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete comment");
       return false;
     }
@@ -150,7 +228,7 @@ export function useComments() {
     try {
       await addCommentReactionMutation.mutateAsync({ commentId, type });
       return true;
-    } catch (err) {
+    } catch {
       toast.error("Failed to add comment reaction");
       return false;
     }
@@ -168,7 +246,7 @@ export function useComments() {
         userId,
       });
       return true;
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete comment reaction");
       return false;
     }
@@ -201,6 +279,7 @@ export function useComments() {
 
   return {
     addComment,
+    addReply,
     deleteComment,
     addCommentReaction,
     deleteCommentReaction,

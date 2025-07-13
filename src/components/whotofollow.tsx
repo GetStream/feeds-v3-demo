@@ -43,7 +43,7 @@ export function WhoToFollow() {
         </>
       ) : (
         <div className="text-white">
-          <div>You're all caught up with your follows!</div>
+          <div>You&apos;re all caught up with your follows!</div>
           <div className="text-gray-400 text-xs">
             Keep an eye out for fresh recommendations as the community grows.
           </div>

@@ -54,7 +54,7 @@ export function UserAvatar({
       if (userData.id === userId) {
         userName = userData.name;
       }
-    } catch (err) {
+    } catch {
       // Ignore parsing errors
     }
   }

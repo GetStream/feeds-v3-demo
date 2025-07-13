@@ -31,7 +31,7 @@ export default function Sidebar() {
     <div className="flex flex-col items-start justify-between flex-[0.2] p-4 h-screen space-y-2 sticky top-0">
       <div>
         <div className="mb-8 px-4">
-          <img src={Logo.src} className="h-8" />
+          <img src={Logo.src} className="h-8" alt="Logo" />
         </div>
 
         {/* Navigation Items */}

@@ -23,7 +23,7 @@ let globalTimelineFeed: Feed | null = null;
 let globalUserFeed: Feed | null = null;
 let globalTimelineActivities: ActivityResponse[] = [];
 let globalUserActivities: ActivityResponse[] = [];
-let globalSubscribers = new Set<() => void>();
+const globalSubscribers = new Set<() => void>();
 let globalInitializationPromise: Promise<void> | null = null;
 
 export function useFeedManager() {
@@ -95,14 +95,15 @@ export function useFeedManager() {
               // Small delay to ensure follow relationship is established
               await new Promise((resolve) => setTimeout(resolve, 100));
             }
-          } catch (err: any) {
+          } catch (err) {
             // Ignore if already following - this is expected on refresh
-            if (err.message?.includes("already exists in accepted state")) {
+            const errorMessage = (err as Error).message;
+            if (errorMessage?.includes("already exists in accepted state")) {
               console.log(
                 "Timeline already follows user feed - this is normal"
               );
             } else {
-              toast.error("Follow error: " + err.message);
+              toast.error("Follow error: " + errorMessage);
             }
           }
 
@@ -143,7 +144,7 @@ export function useFeedManager() {
           // Store global references
           globalTimelineFeed = timeline;
           globalUserFeed = user;
-        } catch (err: any) {
+        } catch (err) {
           console.error("Error initializing feeds:", err);
           toast.error("Error initializing feeds");
         } finally {

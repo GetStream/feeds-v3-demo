@@ -2,7 +2,7 @@ export default function Whatshappening() {
   return (
     <div className="bg-zinc-900 rounded-2xl p-4">
       <h2 className="text-lg font-semibold text-white mb-4">
-        What's happening?
+        What&apos;s happening?
       </h2>
       <div className="space-y-4">
         <div className="p-4 bg-zinc-800 rounded-xl">

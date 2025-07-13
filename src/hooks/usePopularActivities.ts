@@ -7,39 +7,53 @@ import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
-// Query key for bookmarks data
-const BOOKMARKS_QUERY_KEY = ["bookmarks"];
+// Query key for popular activities data
+const POPULAR_QUERY_KEY = ["popular"];
 
-const fetchBookmarkedActivities = async (
+const fetchPopularActivities = async (
   client: FeedsClient,
   user: User
 ): Promise<ActivityResponse[]> => {
   if (!client || !user) return [];
 
   try {
-    const bookmarks = await client.queryBookmarks();
+    // Use a public feed for popular activities
+    const popularFeed = client.feed("notification", user.id);
+    const activities = await popularFeed.getOrCreate({
+      view: "popular-view",
+      external_ranking: {
+        weight: 2.5,
+        comment_weight: 20,
+        base_score: 10,
+      },
+    });
 
-    return bookmarks.bookmarks.map((bookmark) => bookmark.activity) || [];
+    return activities.activities || [];
   } catch (error) {
-    console.error("Error fetching bookmarked activities:", error);
-    toast.error("Error fetching bookmarks");
+    console.error("Error fetching popular activities:", error);
+    toast.error("Error fetching popular activities");
     return [];
   }
 };
 
-export function useBookmarks() {
+export function usePopularActivities() {
   const { client, user } = useUser();
   const [loading, setLoading] = useState(true);
 
   const {
-    data: bookmarkedActivities = [],
+    data: popularActivities = [],
     isLoading,
     isFetching,
     error,
-    refetch: fetchBookmarks,
+    refetch: fetchPopular,
   } = useQuery({
-    queryKey: [...BOOKMARKS_QUERY_KEY, user?.id],
-    queryFn: () => fetchBookmarkedActivities(client!, user!),
+    queryKey: [...POPULAR_QUERY_KEY, user?.id],
+    queryFn: () => {
+      if (!client) {
+        throw new Error("Client is not available");
+      }
+      return fetchPopularActivities(client, user!);
+    },
     enabled: !!client && !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -53,8 +67,8 @@ export function useBookmarks() {
   const isLoadingData = loading || isLoading || isFetching;
 
   return {
-    bookmarkedActivities,
-    fetchBookmarks,
+    popularActivities,
+    fetchPopular,
     isFetching,
     isLoading: isLoadingData,
     error: error?.message || null,

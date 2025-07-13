@@ -70,7 +70,7 @@ export function Composer() {
                 if (e.key === "Enter" && e.shiftKey) {
                   e.preventDefault();
                   if (text.trim() && text.length <= maxLength) {
-                    handleSubmit(e as any);
+                    handleSubmit(e as React.FormEvent);
                   }
                 }
               }}

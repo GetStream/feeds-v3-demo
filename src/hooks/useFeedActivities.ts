@@ -76,12 +76,13 @@ export function useFeedActivities() {
             // Small delay to ensure follow relationship is established
             await new Promise((resolve) => setTimeout(resolve, 100));
           }
-        } catch (err: any) {
+        } catch (err) {
           // Ignore if already following - this is expected on refresh
-          if (err.message?.includes("already exists in accepted state")) {
+          const errorMessage = (err as Error).message;
+          if (errorMessage?.includes("already exists in accepted state")) {
             console.log("Timeline already follows user feed - this is normal");
           } else {
-            toast.error("Follow error: " + err.message);
+            toast.error("Follow error: " + errorMessage);
           }
         }
 
@@ -113,7 +114,7 @@ export function useFeedActivities() {
 
         setTimelineFeed(timeline);
         setUserFeed(user);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error initializing feeds:", err);
         toast.error("Error initializing feeds");
       } finally {

@@ -42,7 +42,7 @@ const fetchWhoToFollowData = async (
     });
 
     return suggestions.users || [];
-  } catch (error) {
+  } catch {
     toast.error("Error fetching who to follow");
     return [];
   }

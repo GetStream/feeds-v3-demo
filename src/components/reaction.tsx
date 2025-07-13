@@ -3,7 +3,7 @@
 "use client";
 
 import { useUser } from "@/hooks/useUser";
-import { ActivityResponse, FeedsClient } from "@stream-io/feeds-client";
+import { ActivityResponse } from "@stream-io/feeds-client";
 import { Heart, Bookmark, Pin, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -43,14 +43,20 @@ export default function ReactionsPanel({ activity }: Props) {
 
     // Check if activity is pinned by current user
     // Look for pinned activities in the activity data
-    const isPinnedByUser =
-      (activity as any).pinned_activities?.some(
-        (pinned: any) => pinned.user?.id === user.id
-      ) || false;
+    const pinnedActivities = (activity as unknown as Record<string, unknown>)
+      .pinned_activities;
+    const isPinnedByUser = Array.isArray(pinnedActivities)
+      ? pinnedActivities.some(
+          (pinned: Record<string, unknown>) =>
+            (pinned.user as Record<string, unknown>)?.id === user.id
+        )
+      : false;
 
     // Check if activity is bookmarked by current user
+    const ownBookmarks = (activity as unknown as Record<string, unknown>)
+      .own_bookmarks;
     const isBookmarkedByUser =
-      (activity as any).own_bookmarks?.length > 0 || false;
+      Array.isArray(ownBookmarks) && ownBookmarks.length > 0;
 
     setReactionCounts(counts);
     setUserReactions(userReacts);
@@ -134,11 +140,14 @@ export default function ReactionsPanel({ activity }: Props) {
 
       if (isBookmarked) {
         // Delete bookmark - we need to delete the specific bookmark
-        const bookmarks = (activity as any).own_bookmarks || [];
-        if (bookmarks.length > 0) {
+        const bookmarks =
+          (activity as unknown as Record<string, unknown>).own_bookmarks || [];
+        if (Array.isArray(bookmarks) && bookmarks.length > 0) {
+          const firstBookmark = bookmarks[0] as Record<string, unknown>;
           await client.deleteBookmark({
             activity_id: activity.id,
-            folder_id: bookmarks[0].folder?.id, // Delete from the first folder
+            folder_id: (firstBookmark.folder as Record<string, unknown>)
+              ?.id as string, // Delete from the first folder
           });
         }
         setIsBookmarked(false);

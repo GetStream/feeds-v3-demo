@@ -2,13 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./useUser";
+import { FeedsClient, FollowResponse } from "@stream-io/feeds-client";
 
 // Query key for followers
 const FOLLOWERS_QUERY_KEY = ["followers"];
 
 // Fetch followers from Stream API
 const fetchFollowers = async (
-  client: any,
+  client: FeedsClient,
   userId: string
 ): Promise<string[]> => {
   const response = await client.queryFollows({
@@ -17,7 +18,9 @@ const fetchFollowers = async (
     },
   });
 
-  return response.follows.map((follow: any) => follow.target_feed.id);
+  return response.follows.map(
+    (follow: FollowResponse) => follow.target_feed.id
+  );
 };
 
 export function useFollowers() {
@@ -32,7 +35,12 @@ export function useFollowers() {
     refetch: refreshFollowers,
   } = useQuery({
     queryKey: [...FOLLOWERS_QUERY_KEY, user?.id],
-    queryFn: () => fetchFollowers(client, user!.id),
+    queryFn: () => {
+      if (!client) {
+        throw new Error("Client is not available");
+      }
+      return fetchFollowers(client, user!.id);
+    },
     enabled: !!client && !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

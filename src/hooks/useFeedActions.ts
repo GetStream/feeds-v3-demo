@@ -2,23 +2,24 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./useUser";
+import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 
 // Query keys for feeds - these can be used for manual refetching
-const FEED_QUERY_KEYS = {
-  timeline: (userId: string) => ["feed", "timeline", userId],
-  user: (userId: string) => ["feed", "user", userId],
-  activities: (userId: string, feedType: string) => [
-    "feed",
-    "activities",
-    userId,
-    feedType,
-  ],
-} as const;
+// const FEED_QUERY_KEYS = {
+//   timeline: (userId: string) => ["feed", "timeline", userId],
+//   user: (userId: string) => ["feed", "user", userId],
+//   activities: (userId: string, feedType: string) => [
+//     "feed",
+//     "activities",
+//     userId,
+//     feedType,
+//   ],
+// } as const;
 
 // Add activity to user feed
 const addActivityToFeed = async (
-  client: any,
+  client: FeedsClient,
   userId: string,
   text: string
 ): Promise<void> => {
@@ -34,7 +35,7 @@ const addActivityToFeed = async (
 
 // Delete activity
 const deleteActivityFromFeed = async (
-  client: any,
+  client: FeedsClient,
   activityId: string
 ): Promise<void> => {
   await client.deleteActivity({
