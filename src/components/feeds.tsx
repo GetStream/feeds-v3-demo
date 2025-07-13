@@ -6,18 +6,10 @@ import { Composer } from "./composer";
 
 import { Loading } from "./loading";
 import { Error } from "./error";
-import UserModal from "./userModal";
 import Activity from "./activity";
 
 export default function FeedView() {
-  const {
-    user,
-    error,
-    loading: clientLoading,
-    retryConnection,
-    showUserModal,
-    createUser,
-  } = useUser();
+  const { user, error, loading: clientLoading, retryConnection } = useUser();
   const {
     activities,
     feedType,
@@ -29,15 +21,7 @@ export default function FeedView() {
 
   // Show user modal if no user is authenticated
   if (!user) {
-    return (
-      <div>
-        <UserModal
-          isOpen={showUserModal}
-          onSubmit={createUser}
-          loading={clientLoading}
-        />
-      </div>
-    );
+    return <div>{/* User modal is handled globally in layout */}</div>;
   }
 
   if (loading) {
@@ -56,13 +40,6 @@ export default function FeedView() {
 
   return (
     <div>
-      {/* User Registration Modal */}
-      <UserModal
-        isOpen={showUserModal}
-        onSubmit={createUser}
-        loading={clientLoading}
-      />
-
       {/* Feed Type Selector */}
       <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-gray-800 font-bold px-4 pt-4 mb-5 flex gap-5 items-center justify-between">
         <div className="flex gap-5">

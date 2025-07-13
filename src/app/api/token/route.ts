@@ -44,8 +44,16 @@ export async function POST(req: NextRequest) {
             "popularity * external.weight + comment_count * external.comment_weight + external.base_score",
         },
       });
-    } catch (error) {
+    } catch {
       console.log("popular view already exists");
+    }
+
+    try {
+      await feedsClient.feeds.createFeedGroup({
+        feed_group_id: "foryou",
+      });
+    } catch {
+      console.log("foryou group already exists");
     }
 
     const token = client.generateUserToken({ user_id });

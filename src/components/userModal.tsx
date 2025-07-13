@@ -1,28 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import { useUser } from "../hooks/useUser";
 
 interface UserModalProps {
-  isOpen: boolean;
-  onSubmit: (name: string) => void;
+  isOpen?: boolean;
+  onSubmit?: (name: string) => void;
   loading?: boolean;
 }
 
 export default function UserModal({
   isOpen,
   onSubmit,
-  loading = false,
-}: UserModalProps) {
+  loading,
+}: UserModalProps = {}) {
   const [name, setName] = useState("");
+
+  // Use global user state if props are not provided
+  const { showUserModal, createUser, loading: clientLoading } = useUser();
+  const modalIsOpen = isOpen ?? showUserModal;
+  const modalOnSubmit = onSubmit ?? createUser;
+  const modalLoading = loading ?? clientLoading;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSubmit(name.trim());
+      modalOnSubmit(name.trim());
     }
   };
 
-  if (!isOpen) return null;
+  if (!modalIsOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -50,7 +57,7 @@ export default function UserModal({
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name..."
               className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={loading}
+              disabled={modalLoading}
               autoFocus
               required
             />
@@ -58,10 +65,10 @@ export default function UserModal({
 
           <button
             type="submit"
-            disabled={loading || !name.trim()}
+            disabled={modalLoading || !name.trim()}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Creating Profile..." : "Get Started"}
+            {modalLoading ? "Creating Profile..." : "Get Started"}
           </button>
         </form>
       </div>

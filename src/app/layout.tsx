@@ -5,6 +5,7 @@ import { QueryProvider } from "@/components/queryProvider";
 import Whatshappening from "@/components/whatshappening";
 import Sidebar from "@/components/sidebar";
 import { WhoToFollow } from "@/components/whotofollow";
+import { UserModal } from "@/components";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -36,6 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
       >
         <QueryProvider>
+          <UserModal />
           <main className="grid grid-cols-[270px_auto_350px] gap-5 min-h-screen bg-black mx-auto w-[1280px]">
             {/* Sidebar */}
             <div className="flex-[0.25] border-r border-gray-800">
@@ -58,6 +60,7 @@ export default function RootLayout({
               </div>
             </div>
           </main>
+
           <Toaster
             position="bottom-right"
             toastOptions={{

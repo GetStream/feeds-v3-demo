@@ -7,52 +7,45 @@ import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
-// Query key for popular activities data
-const POPULAR_QUERY_KEY = ["popular"];
+// Query key for foryou activities data
+const FORYOU_QUERY_KEY = ["foryou"];
 
-const fetchPopularActivities = async (
+const fetchForyouActivities = async (
   client: FeedsClient,
   user: User
 ): Promise<ActivityResponse[]> => {
   if (!client || !user) return [];
 
   try {
-    // Use a public feed for popular activities
-    const popularFeed = client.feed("timeline", user.id);
-    const activities = await popularFeed.getOrCreate({
-      view: "popular-view",
-      external_ranking: {
-        weight: 2.5,
-        comment_weight: 20,
-        base_score: 10,
-      },
-    });
+    // Use a foryou feed for personalized activities
+    const feed = client.feed("foryou", user.id);
+    const activities = await feed.getOrCreate();
 
     return activities.activities || [];
   } catch (error) {
-    console.error("Error fetching popular activities:", error);
-    toast.error("Error fetching popular activities");
+    console.error("Error fetching foryou activities:", error);
+    toast.error("Error fetching foryou activities");
     return [];
   }
 };
 
-export function usePopularActivities() {
+export function useForyouActivities() {
   const { client, user } = useUser();
   const [loading, setLoading] = useState(true);
 
   const {
-    data: popularActivities = [],
+    data: foryouActivities = [],
     isLoading,
     isFetching,
     error,
-    refetch: fetchPopular,
+    refetch: fetchForyou,
   } = useQuery({
-    queryKey: [...POPULAR_QUERY_KEY, user?.id],
+    queryKey: [...FORYOU_QUERY_KEY, user?.id],
     queryFn: () => {
       if (!client) {
         throw new Error("Client is not available");
       }
-      return fetchPopularActivities(client, user!);
+      return fetchForyouActivities(client, user!);
     },
     enabled: !!client && !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -67,8 +60,8 @@ export function usePopularActivities() {
   const isLoadingData = loading || isLoading || isFetching;
 
   return {
-    popularActivities,
-    fetchPopular,
+    foryouActivities,
+    fetchForyou,
     isFetching,
     isLoading: isLoadingData,
     error: error?.message || null,

@@ -1,10 +1,9 @@
 "use client";
 
-import { usePopularActivities } from "../../hooks";
+import { useForyouActivities } from "../../hooks";
 import { useUser } from "../../hooks/useUser";
 import { Loading } from "../../components/loading";
 import { Error } from "../../components/error";
-import UserModal from "../../components/userModal";
 import Activity from "../../components/activity";
 
 export default function ExplorePage() {
@@ -13,35 +12,19 @@ export default function ExplorePage() {
     error: userError,
     loading: clientLoading,
     retryConnection,
-    showUserModal,
-    createUser,
   } = useUser();
 
   const {
-    popularActivities,
-    isLoading: popularLoading,
-    error: popularError,
-  } = usePopularActivities();
+    foryouActivities,
+    isLoading: foryouLoading,
+    error: foryouError,
+  } = useForyouActivities();
 
-  const loading =
-    (clientLoading || popularLoading) && !popularActivities.length;
-  const error = userError || popularError;
-
-  // Show user modal if no user is authenticated
-  if (!user) {
-    return (
-      <div>
-        <UserModal
-          isOpen={showUserModal}
-          onSubmit={createUser}
-          loading={clientLoading}
-        />
-      </div>
-    );
-  }
+  const loading = (clientLoading || foryouLoading) && !foryouActivities.length;
+  const error = userError || foryouError;
 
   if (loading) {
-    return <Loading message="Loading popular activities..." />;
+    return <Loading message="Loading for you activities..." />;
   }
 
   if (error) {
@@ -56,34 +39,27 @@ export default function ExplorePage() {
 
   return (
     <div>
-      {/* User Registration Modal */}
-      <UserModal
-        isOpen={showUserModal}
-        onSubmit={createUser}
-        loading={clientLoading}
-      />
-
       {/* Page Header */}
       <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-gray-800 font-bold px-4 pt-4 mb-5">
-        <h1 className="text-xl text-white">Explore</h1>
+        <h1 className="text-xl text-white">For You</h1>
         <p className="text-gray-400 text-sm font-light mb-4">
-          Discover popular posts from the community
+          Personalized content curated just for you.
         </p>
       </div>
 
-      {popularActivities.length === 0 ? (
+      {foryouActivities.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-400 text-lg mb-2">
-            No popular activities found
+            No ForYou activities found
           </div>
           <p className="text-gray-500 text-sm">
-            Check back later for trending posts!
+            Check back later for personalized posts!
           </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {popularActivities.map((activity) => (
-            <Activity key={`popular-${activity.id}`} activity={activity} />
+          {foryouActivities.map((activity) => (
+            <Activity key={`foryou-${activity.id}`} activity={activity} />
           ))}
         </div>
       )}
