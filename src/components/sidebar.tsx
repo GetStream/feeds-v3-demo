@@ -1,26 +1,26 @@
 "use client";
 
-import {
-  MdHome,
-  MdSearch,
-  MdNotificationsNone,
-  MdBookmarkBorder,
-  MdPerson,
-  MdTrendingUp,
-} from "react-icons/md";
 import { useUser } from "../hooks/useUser";
 import { Avatar } from "./avatar";
-import { LogOut } from "lucide-react";
+import {
+  Bell,
+  Bookmark,
+  Home,
+  LogOut,
+  Search,
+  TrendingUp,
+  User2,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/assets/img/logo.png";
 const sidebarItems = [
-  { icon: MdHome, label: "Home", href: "/" },
-  { icon: MdSearch, label: "Explore", href: "/explore" },
-  { icon: MdNotificationsNone, label: "Notifications", href: "/notifications" },
-  { icon: MdBookmarkBorder, label: "Bookmarks", href: "/bookmarks" },
-  { icon: MdTrendingUp, label: "Trending", href: "/trending" },
-  { icon: MdPerson, label: "Profile", href: "/profile" },
+  { icon: Home, label: "Home", href: "/" },
+  { icon: Search, label: "Explore", href: "/explore" },
+  { icon: Bell, label: "Notifications", href: "/notifications" },
+  { icon: Bookmark, label: "Bookmarks", href: "/bookmarks" },
+  { icon: TrendingUp, label: "Trending", href: "/trending" },
+  { icon: User2, label: "Profile", href: "/profile" },
 ];
 
 export default function Sidebar() {

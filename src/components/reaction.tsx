@@ -186,7 +186,7 @@ export default function ReactionsPanel({ activity }: Props) {
       <div className="flex items-center space-x-6">
         <button title="Comments" className={getReactionStyles("messages")}>
           <MessageCircle className="w-5 h-5" />
-          <span className="text-sm">{activity.comments.length}</span>
+          <span className="text-sm">{activity.comment_count}</span>
         </button>
         {/* Like/Heart */}
         <button

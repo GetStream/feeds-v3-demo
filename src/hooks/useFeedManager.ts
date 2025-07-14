@@ -18,13 +18,69 @@ const FEED_QUERY_KEYS = {
   ],
 } as const;
 
-// Global feed instances to prevent multiple initializations
+// Global feed instances and state
 let globalTimelineFeed: Feed | null = null;
 let globalUserFeed: Feed | null = null;
 let globalTimelineActivities: ActivityResponse[] = [];
 let globalUserActivities: ActivityResponse[] = [];
-const globalSubscribers = new Set<() => void>();
+let globalTimelineUnsubscribe: (() => void) | null = null;
+let globalUserUnsubscribe: (() => void) | null = null;
 let globalInitializationPromise: Promise<void> | null = null;
+let globalComponentCount = 0;
+
+// Event emitter for state updates
+const stateUpdateCallbacks = new Set<
+  (type: "timeline" | "user", activities: ActivityResponse[]) => void
+>();
+
+function notifyStateUpdate(
+  type: "timeline" | "user",
+  activities: ActivityResponse[]
+) {
+  console.log(
+    `[useFeedManager] Notifying ${stateUpdateCallbacks.size} callbacks about ${type} update`
+  );
+  stateUpdateCallbacks.forEach((callback) => callback(type, activities));
+}
+
+// Standalone refetch functions that don't require the hook
+export const refetchTimelineGlobal = async () => {
+  if (!globalTimelineFeed) return;
+  try {
+    await globalTimelineFeed.getOrCreate();
+    toast.success("Timeline refreshed successfully!");
+  } catch (error) {
+    console.error("Error refetching timeline:", error);
+    toast.error("Failed to refresh timeline");
+  }
+};
+
+export const refetchUserGlobal = async () => {
+  if (!globalUserFeed) return;
+  try {
+    await globalUserFeed.getOrCreate();
+    toast.success("User feed refreshed successfully!");
+  } catch (error) {
+    console.error("Error refetching user feed:", error);
+    toast.error("Failed to refresh user feed");
+  }
+};
+
+export const refetchAllFeedsGlobal = async () => {
+  try {
+    // Refetch feeds sequentially to avoid concurrent getOrCreate calls
+    if (globalTimelineFeed) {
+      await globalTimelineFeed.getOrCreate();
+    }
+    if (globalUserFeed) {
+      await globalUserFeed.getOrCreate();
+    }
+    toast.success("All feeds refreshed successfully!");
+  } catch (error) {
+    console.error("Error refetching feeds:", error);
+    toast.error("Failed to refresh feeds");
+  }
+};
 
 export function useFeedManager() {
   const { client, user } = useUser();
@@ -47,26 +103,80 @@ export function useFeedManager() {
   const activities =
     feedType === "timeline" ? timelineActivities : userActivities;
 
+  // State update handler
+  const handleStateUpdate = useCallback(
+    (type: "timeline" | "user", activities: ActivityResponse[]) => {
+      console.log(
+        `[useFeedManager] State update received for ${type}:`,
+        activities.length,
+        "activities"
+      );
+      if (type === "timeline") {
+        setTimelineActivities(activities);
+      } else {
+        setUserActivities(activities);
+      }
+    },
+    []
+  );
+
+  // Subscribe to global state updates
+  useEffect(() => {
+    stateUpdateCallbacks.add(handleStateUpdate);
+
+    // Set initial state from global state
+    setTimelineActivities(globalTimelineActivities);
+    setUserActivities(globalUserActivities);
+
+    return () => {
+      stateUpdateCallbacks.delete(handleStateUpdate);
+    };
+  }, [handleStateUpdate]);
+
   // Initialize feeds globally
   useEffect(() => {
     if (!client || !userId) return;
 
+    // Increment component count
+    globalComponentCount++;
+    console.log(
+      `[useFeedManager] Component mounted. Count: ${globalComponentCount}`
+    );
+
     const initFeeds = async () => {
       // If already initializing, wait for that to complete
       if (globalInitializationPromise) {
+        console.log("[useFeedManager] Waiting for existing initialization...");
         await globalInitializationPromise;
         return;
       }
 
-      // If already initialized, just set up subscriptions
+      // If already initialized, just ensure we have the latest state
       if (globalTimelineFeed && globalUserFeed) {
-        setTimelineActivities(globalTimelineActivities);
-        setUserActivities(globalUserActivities);
+        console.log(
+          "[useFeedManager] Feeds already initialized, syncing state..."
+        );
         setLoading(false);
+
+        // Get the latest state from the feeds
+        const currentTimelineState = globalTimelineFeed.state.getLatestValue();
+        const currentUserState = globalUserFeed.state.getLatestValue();
+
+        if (currentTimelineState.activities) {
+          globalTimelineActivities = currentTimelineState.activities;
+          notifyStateUpdate("timeline", globalTimelineActivities);
+        }
+
+        if (currentUserState.activities) {
+          globalUserActivities = currentUserState.activities;
+          notifyStateUpdate("user", globalUserActivities);
+        }
+
         return;
       }
 
       // Start initialization
+      console.log("[useFeedManager] Starting feed initialization...");
       globalInitializationPromise = (async () => {
         try {
           setLoading(true);
@@ -108,42 +218,54 @@ export function useFeedManager() {
           }
 
           // Set up subscriptions for both feeds
-          timeline.state.subscribe((state) => {
+          console.log("[useFeedManager] Setting up feed subscriptions...");
+          globalTimelineUnsubscribe = timeline.state.subscribe((state) => {
+            console.log(
+              "[useFeedManager] Timeline state update received:",
+              state.activities?.length || 0,
+              "activities"
+            );
             globalTimelineActivities = state.activities || [];
-            setTimelineActivities(globalTimelineActivities);
             // Update React Query cache when real-time updates come in
             queryClient.setQueryData(
               FEED_QUERY_KEYS.timeline(userId),
               globalTimelineActivities
             );
-            // Notify all subscribers
-            globalSubscribers.forEach((callback) => callback());
+            // Notify all components about the state update
+            notifyStateUpdate("timeline", globalTimelineActivities);
           });
 
-          user.state.subscribe((state) => {
+          globalUserUnsubscribe = user.state.subscribe((state) => {
+            console.log(
+              "[useFeedManager] User state update received:",
+              state.activities?.length || 0,
+              "activities"
+            );
             globalUserActivities = state.activities || [];
-            setUserActivities(globalUserActivities);
             // Update React Query cache when real-time updates come in
             queryClient.setQueryData(
               FEED_QUERY_KEYS.user(userId),
               globalUserActivities
             );
-            // Notify all subscribers
-            globalSubscribers.forEach((callback) => callback());
+            // Notify all components about the state update
+            notifyStateUpdate("user", globalUserActivities);
           });
 
           // Set initial activities
           const timelineState = timeline.state.getLatestValue();
           globalTimelineActivities = timelineState.activities || [];
-          setTimelineActivities(globalTimelineActivities);
+          notifyStateUpdate("timeline", globalTimelineActivities);
 
           const userState = user.state.getLatestValue();
           globalUserActivities = userState.activities || [];
-          setUserActivities(globalUserActivities);
+          notifyStateUpdate("user", globalUserActivities);
 
           // Store global references
           globalTimelineFeed = timeline;
           globalUserFeed = user;
+          console.log(
+            "[useFeedManager] Feed initialization completed successfully"
+          );
         } catch (err) {
           console.error("Error initializing feeds:", err);
           toast.error("Error initializing feeds");
@@ -160,8 +282,27 @@ export function useFeedManager() {
 
     // Cleanup function
     return () => {
-      // Note: We don't unsubscribe here as other components might be using the feeds
-      // The feeds will be cleaned up when the component unmounts and no other components are using them
+      // Decrement component count
+      globalComponentCount--;
+      console.log(
+        `[useFeedManager] Component unmounted. Count: ${globalComponentCount}`
+      );
+
+      // If no components are using the feeds, clean up the global subscriptions
+      if (globalComponentCount === 0) {
+        console.log(
+          "[useFeedManager] No components left, cleaning up global subscriptions..."
+        );
+        globalTimelineUnsubscribe?.();
+        globalUserUnsubscribe?.();
+        globalTimelineUnsubscribe = null;
+        globalUserUnsubscribe = null;
+        globalTimelineFeed = null;
+        globalUserFeed = null;
+        globalTimelineActivities = [];
+        globalUserActivities = [];
+        stateUpdateCallbacks.clear();
+      }
     };
   }, [client, userId, queryClient]);
 

@@ -105,7 +105,7 @@ export function useFeedActivities() {
           );
         });
 
-        // Set initial activities
+        // Set initial activities from current state
         const timelineState = timeline.state.getLatestValue();
         setTimelineActivities(timelineState.activities || []);
 
@@ -125,6 +125,8 @@ export function useFeedActivities() {
     initFeeds();
 
     return () => {
+      // Only unsubscribe from state updates, don't close the feeds
+      // This allows the feeds to continue running in the background
       timelineUnsubscribe?.();
       userUnsubscribe?.();
     };

@@ -9,3 +9,4 @@ export { useComments } from "./useComments";
 export { useBookmarks } from "./useBookmarks";
 export { usePopularActivities } from "./usePopularActivities";
 export { useForyouActivities } from "./useForyouActivities";
+export { useNotifications } from "./useNotifications";

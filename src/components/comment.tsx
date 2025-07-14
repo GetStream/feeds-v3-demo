@@ -235,7 +235,7 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
 
     return (
       <div className={`${indentClass}`}>
-        <div className="flex gap-3 p-3 pt-0 transition-colors relative">
+        <div className="flex gap-3 p-3 pt-0 transition-colors relative z-30">
           <Avatar userName={comment.user.name} size="sm" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -309,7 +309,7 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
           <div className="relative">
             <div className="space-y-2">
               {comment.replies.map((reply) => (
-                <div key={reply.id} className="relative">
+                <div key={reply.id} className="relative z-10">
                   <CommentItem comment={reply} level={level + 1} />
                 </div>
               ))}
@@ -396,7 +396,7 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
       {activity.comments.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-300 mb-3">
-            Comments ({activity.comments.length})
+            Comments ({activity.comment_count})
           </h3>
           {organizeComments(activity.comments).map((comment) => (
             <CommentItem key={comment.id} comment={comment} />

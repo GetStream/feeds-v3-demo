@@ -1,11 +1,38 @@
 "use client";
 
-import { useUser } from "@/hooks/useUser";
+import { useNotifications } from "../../hooks";
+import { useUser } from "../../hooks/useUser";
+import { Loading } from "../../components/loading";
+import { Error } from "../../components/error";
+import Activity from "../../components/activity";
 
 export default function NotificationsPage() {
+  const { user, error, loading: clientLoading, retryConnection } = useUser();
+  const {
+    notifications,
+    isLoading: notificationsLoading,
+    error: notificationsError,
+    fetchNotifications,
+  } = useNotifications();
+
+  const loading = clientLoading || notificationsLoading;
+
+  if (loading) {
+    return <Loading message="Loading notifications..." />;
+  }
+
+  if (error || notificationsError) {
+    return (
+      <Error
+        title="Connection Error"
+        message={error || notificationsError || "Failed to load notifications"}
+        onRetry={retryConnection || fetchNotifications}
+      />
+    );
+  }
+
   return (
     <div>
-      {/* Page Header */}
       <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-gray-800 font-bold px-4 pt-4 mb-5">
         <h1 className="text-xl text-white">Notifications</h1>
         <p className="text-gray-400 text-sm font-light mb-4">
@@ -13,6 +40,21 @@ export default function NotificationsPage() {
           likes your content.
         </p>
       </div>
+
+      {!notifications?.activities || notifications.activities.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-gray-400 text-lg mb-2">No notifications yet</div>
+          <p className="text-gray-500 text-sm">
+            When you get notifications, they'll appear here.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {notifications.activities.map((notification) => (
+            <div key={`notification-${notification.id}`}>{notification.id}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

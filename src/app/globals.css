@@ -100,7 +100,7 @@ body {
 .reply .avatar::before {
   content: "";
   width: 15px;
-  height: 180px;
+  height: 300px;
   position: absolute;
   left: -17px;
   border-left: 2px solid #444;
