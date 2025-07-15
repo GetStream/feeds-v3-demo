@@ -2,27 +2,55 @@ import { NextRequest, NextResponse } from "next/server";
 import { StreamClient } from "@stream-io/node-sdk";
 import { StreamClient as StreamFeedsClient } from "@stream-io/node-sdk-feed";
 
-const client = new StreamClient(
-  process.env.NEXT_PUBLIC_STREAM_API_KEY!,
-  process.env.STREAM_API_SECRET!,
-  {
-    basePath: process.env.NEXT_PUBLIC_FEEDS_BASE_URL,
-  }
-);
+interface CustomSettings {
+  apiKey: string;
+  apiSecret: string;
+  baseUrl: string;
+}
 
-const feedsClient = new StreamFeedsClient(
-  process.env.NEXT_PUBLIC_STREAM_API_KEY!,
-  process.env.STREAM_API_SECRET!,
-  { basePath: process.env.NEXT_PUBLIC_FEEDS_BASE_URL }
-);
+// Default client using environment variables
+const getDefaultClient = () =>
+  new StreamClient(
+    process.env.NEXT_PUBLIC_STREAM_API_KEY!,
+    process.env.STREAM_API_SECRET!,
+    {
+      basePath: process.env.NEXT_PUBLIC_FEEDS_BASE_URL,
+    }
+  );
+
+const getDefaultFeedsClient = () =>
+  new StreamFeedsClient(
+    process.env.NEXT_PUBLIC_STREAM_API_KEY!,
+    process.env.STREAM_API_SECRET!,
+    { basePath: process.env.NEXT_PUBLIC_FEEDS_BASE_URL }
+  );
+
+// Custom client using provided settings
+const getCustomClient = (settings: CustomSettings) =>
+  new StreamClient(settings.apiKey, settings.apiSecret, {
+    basePath: settings.baseUrl,
+  });
+
+const getCustomFeedsClient = (settings: CustomSettings) =>
+  new StreamFeedsClient(settings.apiKey, settings.apiSecret, {
+    basePath: settings.baseUrl,
+  });
 
 export async function POST(req: NextRequest) {
   try {
-    const { user_id, name } = await req.json();
+    const { user_id, name, customSettings } = await req.json();
 
     if (!user_id) {
       return NextResponse.json({ error: "Missing user_id" }, { status: 400 });
     }
+
+    // Use custom settings if provided, otherwise use default
+    const client = customSettings
+      ? getCustomClient(customSettings)
+      : getDefaultClient();
+    const feedsClient = customSettings
+      ? getCustomFeedsClient(customSettings)
+      : getDefaultFeedsClient();
 
     // Create or update user if name is provided
     if (name) {

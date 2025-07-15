@@ -5,12 +5,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 
-const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
-const baseUrl = process.env.NEXT_PUBLIC_FEEDS_BASE_URL!;
+// Default values from environment variables
+const defaultApiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
+const defaultBaseUrl = process.env.NEXT_PUBLIC_FEEDS_BASE_URL!;
 
 export interface User {
   id: string;
   name: string;
+}
+
+interface CustomSettings {
+  apiKey: string;
+  apiSecret: string;
+  baseUrl: string;
 }
 
 interface AuthTokenResponse {
@@ -36,6 +43,22 @@ const getUserFromStorage = (): User | null => {
   return null;
 };
 
+// Get custom settings from localStorage
+const getCustomSettingsFromStorage = (): CustomSettings | null => {
+  if (typeof window === "undefined") return null;
+
+  const storedSettings = localStorage.getItem("customSettings");
+  if (storedSettings) {
+    try {
+      return JSON.parse(storedSettings);
+    } catch (err) {
+      console.error("Failed to parse stored custom settings:", err);
+      localStorage.removeItem("customSettings");
+    }
+  }
+  return null;
+};
+
 // Save user to localStorage
 const saveUserToStorage = (user: User | null) => {
   if (typeof window === "undefined") return;
@@ -48,11 +71,24 @@ const saveUserToStorage = (user: User | null) => {
 };
 
 // Connect user to Stream API
-const connectUser = async (user: User): Promise<FeedsClient> => {
+const connectUser = async (
+  user: User,
+  customSettings?: CustomSettings
+): Promise<FeedsClient> => {
+  const settings = customSettings || getCustomSettingsFromStorage();
+
+  // Use custom settings if available, otherwise use default environment variables
+  const apiKey = settings?.apiKey || defaultApiKey;
+  const baseUrl = settings?.baseUrl || defaultBaseUrl;
+
   const res = await fetch("/api/token", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: user.id, name: user.name }),
+    body: JSON.stringify({
+      user_id: user.id,
+      name: user.name,
+      customSettings: settings,
+    }),
   });
 
   if (!res.ok) {
@@ -98,12 +134,18 @@ export function useUser() {
 
   // Mutation for creating user
   const createUserMutation = useMutation({
-    mutationFn: async (name: string) => {
+    mutationFn: async ({
+      name,
+      customSettings,
+    }: {
+      name: string;
+      customSettings?: CustomSettings;
+    }) => {
       const randomSuffix = Math.random().toString(36).substring(2, 8);
       const userId = `user-${randomSuffix}`;
       const userData: User = { id: userId, name };
 
-      const client = await connectUser(userData);
+      const client = await connectUser(userData, customSettings);
       saveUserToStorage(userData);
 
       return { user: userData, client };
@@ -129,6 +171,10 @@ export function useUser() {
   const clearUserMutation = useMutation({
     mutationFn: async () => {
       saveUserToStorage(null);
+      // Also clear custom settings when user logs out
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("customSettings");
+      }
       return null;
     },
     onSuccess: () => {
@@ -154,8 +200,8 @@ export function useUser() {
     clearUserMutation.mutate();
   };
 
-  const createUser = async (name: string) => {
-    createUserMutation.mutate(name);
+  const createUser = async (name: string, customSettings?: CustomSettings) => {
+    createUserMutation.mutate({ name, customSettings });
   };
 
   const retryConnection = () => {
