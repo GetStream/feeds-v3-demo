@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@stream-io/feeds-client": "https://github.com/GetStream/stream-feeds-js.git#workspace=@stream-io/feeds-client",
+    "@stream-io/feeds-client": "^0.1.0",
     "@stream-io/node-sdk": "https://github.com/GetStream/stream-node.git#main",
     "@stream-io/node-sdk-feed": "https://github.com/GetStream/stream-node.git#feeds-api",
     "@tanstack/react-query": "^5.82.0",
