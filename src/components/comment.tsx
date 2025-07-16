@@ -169,9 +169,14 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
     comment: CommentResponse,
     type: string
   ) => {
-    //this is a right way to check if the user has reacted to the comment
-    //return comment.own_reactions.length > 0;
-
+    // Check own_reactions first for better accuracy
+    if (comment.own_reactions && comment.own_reactions.length > 0) {
+      return comment.own_reactions.find(
+        (reaction) => reaction.type === type
+      );
+    }
+    
+    // Fallback to latest_reactions if own_reactions is not available
     return comment.latest_reactions?.find(
       (reaction) => reaction.type === type && reaction.user.id === user?.id
     );

@@ -86,10 +86,11 @@ export default function ReactionsPanel({ activity }: Props) {
           [type]: Math.max(0, (prev[type] || 0) - 1),
         }));
       } else {
-        // Add new reaction
+        // Add new reaction with notification enabled
         await client.addReaction({
           activity_id: activity.id,
           type,
+          create_notification_activity: true,
         });
         setUserReactions((prev) => new Set([...prev, type]));
         setReactionCounts((prev) => ({

@@ -4,12 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useUser, User } from "./useUser";
 import {
   GetOrCreateFeedResponse,
+  NotificationStatusResponse,
   StreamResponse,
 } from "@stream-io/feeds-client";
 import { FeedsClient } from "@stream-io/feeds-client";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { NotificationStatusResponse } from "@stream-io/node-sdk-feed";
 
 // Query key for notifications data
 const NOTIFICATIONS_QUERY_KEY = ["notifications"];

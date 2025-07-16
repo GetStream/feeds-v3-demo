@@ -19,6 +19,7 @@ const addCommentToAPI = async (
     object_id: objectId,
     object_type: objectType,
     comment: comment.trim(),
+    create_notification_activity: true,
   });
   return res.comment;
 };
@@ -36,6 +37,7 @@ const addReplyToAPI = async (
     object_type: objectType,
     parent_id: parentId,
     comment: comment.trim(),
+    create_notification_activity: true,
   });
   return res.comment;
 };
