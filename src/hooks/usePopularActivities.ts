@@ -19,7 +19,7 @@ const fetchPopularActivities = async (
   try {
     // Use a public feed for popular activities
     const popularFeed = client.feed("user", user.id);
-    const activities = await popularFeed.getOrCreate({
+    const response = await popularFeed.getOrCreate({
       view: "popular-view",
       external_ranking: {
         weight: 2.5,
@@ -28,7 +28,10 @@ const fetchPopularActivities = async (
       },
     });
 
-    return activities.activities || [];
+    // Filter only activities of type "post"
+    return (response.activities || []).filter(
+      (activity) => activity?.type === "post"
+    );
   } catch (error) {
     console.error("Error fetching popular activities:", error);
     toast.error("Error fetching popular activities");
@@ -55,7 +58,7 @@ export function usePopularActivities() {
       return fetchPopularActivities(client, user!);
     },
     enabled: !!client && !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
