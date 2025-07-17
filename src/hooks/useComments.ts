@@ -61,6 +61,7 @@ const addCommentReactionToAPI = async (
   return await client.addCommentReaction({
     comment_id: commentId,
     type,
+    create_notification_activity: true,
   });
 };
 

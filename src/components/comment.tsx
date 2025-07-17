@@ -100,6 +100,8 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyLoading, setReplyLoading] = useState(false);
+  const [commentReactions, setCommentReactions] = useState<Record<string, Set<string>>>({});
+  const [reactionCounts, setReactionCounts] = useState<Record<string, Record<string, number>>>({});
   const { user } = useUser();
   const { addComment, addReply, deleteComment, toggleCommentReaction } =
     useComments();
@@ -108,6 +110,39 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
   useEffect(() => {
     setShowCommentInput(false);
   }, []);
+
+  // Update comment reactions state when activity changes
+  useEffect(() => {
+    const reactions: Record<string, Set<string>> = {};
+    const counts: Record<string, Record<string, number>> = {};
+    
+    activity.comments.forEach((comment) => {
+      const userReacts = new Set<string>();
+      const commentCounts: Record<string, number> = {};
+      
+      // Get user reactions
+      if (comment.latest_reactions) {
+        comment.latest_reactions.forEach((reaction) => {
+          if (reaction.user.id === user?.id) {
+            userReacts.add(reaction.type);
+          }
+        });
+      }
+      
+      // Get reaction counts
+      if (comment.reaction_groups) {
+        Object.entries(comment.reaction_groups).forEach(([type, group]) => {
+          commentCounts[type] = group.count || 0;
+        });
+      }
+      
+      reactions[comment.id] = userReacts;
+      counts[comment.id] = commentCounts;
+    });
+    
+    setCommentReactions(reactions);
+    setReactionCounts(counts);
+  }, [activity.comments, user]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || newComment.length > 280) return;
@@ -151,7 +186,41 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
   ) => {
     try {
       const hasReaction = !!getUserReactionForComment(comment, type);
-      await toggleCommentReaction(comment.id, type, hasReaction, user?.id);
+      const success = await toggleCommentReaction(comment.id, type, hasReaction, user?.id);
+      
+      if (success) {
+        // Update local state immediately like activity reactions
+        setCommentReactions((prev) => {
+          const currentReactions = prev[comment.id] || new Set<string>();
+          const newReactions = new Set(currentReactions);
+
+          if (hasReaction) {
+            // Remove reaction
+            newReactions.delete(type);
+          } else {
+            // Add reaction
+            newReactions.add(type);
+          }
+          return {
+            ...prev,
+            [comment.id]: newReactions,
+          };
+        });
+
+        // Update reaction counts immediately
+        setReactionCounts((prev) => {
+          const currentCounts = prev[comment.id] || {};
+          const currentCount = currentCounts[type] || 0;
+          
+          return {
+            ...prev,
+            [comment.id]: {
+              ...currentCounts,
+              [type]: hasReaction ? Math.max(0, currentCount - 1) : currentCount + 1,
+            },
+          };
+        });
+      }
     } catch {
       toast.error("Failed to handle comment reaction");
     }
@@ -169,7 +238,13 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
     comment: CommentResponse,
     type: string
   ) => {
-    // Check own_reactions first for better accuracy
+    // Use local state first for immediate updates
+    const localReactions = commentReactions[comment.id];
+    if (localReactions) {
+      return localReactions.has(type);
+    }
+    
+    // Fallback to original comment data
     if (comment.own_reactions && comment.own_reactions.length > 0) {
       return comment.own_reactions.find(
         (reaction) => reaction.type === type
@@ -270,13 +345,12 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
                     }`}
                   />
                 </button>
-                {comment.latest_reactions &&
-                  comment.latest_reactions.length > 0 && (
-                    <span className="text-xs text-gray-400">
-                      {comment.latest_reactions.length} like
-                      {comment.latest_reactions.length > 1 ? "s" : ""}
-                    </span>
-                  )}
+                {(reactionCounts[comment.id]?.["like"] > 0 || (comment.latest_reactions && comment.latest_reactions.length > 0)) && (
+                  <span className="text-xs text-gray-400">
+                    {(reactionCounts[comment.id]?.["like"] || (comment.latest_reactions && comment.latest_reactions.length) || 0)} like
+                    {(reactionCounts[comment.id]?.["like"] || (comment.latest_reactions && comment.latest_reactions.length) || 0) > 1 ? "s" : ""}
+                  </span>
+                )}
               </div>
               {level === 0 ? (
                 <button
@@ -417,3 +491,4 @@ export default function CommentsPanel({ activity }: CommentsPanelProps) {
     </div>
   );
 }
+
