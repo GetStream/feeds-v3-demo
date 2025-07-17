@@ -39,6 +39,7 @@ const fetchNotifications = async (
 export function useNotifications() {
   const { client, user } = useUser();
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const {
     data: notifications,
@@ -55,9 +56,38 @@ export function useNotifications() {
       return fetchNotifications(client, user!);
     },
     enabled: !!client && !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
+
+  // Update unread count when notifications change
+  useEffect(() => {
+    if (notifications?.activities) {
+      // For now, count all activities as unread
+      // Later we will track which ones have been seen
+      const unreadCount = notifications.notification_status?.unread || 0;
+      setUnreadCount(unreadCount);
+    }
+  }, [notifications]);
+
+  // Mark notifications as seen
+  const markAsSeen = async () => {
+    if (!client || !user) return;
+    
+    try {
+      // Mark all notifications as seen
+      const notificationFeed = client.feed("notification", user.id);
+      await client.markActivity({
+        feed_group_id: notificationFeed.group,
+        feed_id: notificationFeed.id,
+        mark_all_seen: true,
+        mark_all_read: true,
+      });
+      setUnreadCount(0);
+    } catch (error) {
+      console.error("Error marking notifications as seen:", error);
+    }
+  };
 
   //this is a hack to fix the loading state, because the query is not returning the data immediately
   useEffect(() => {
@@ -72,5 +102,7 @@ export function useNotifications() {
     isFetching,
     isLoading: isLoadingData,
     error: error?.message || null,
+    unreadCount,
+    markAsSeen,
   };
 }

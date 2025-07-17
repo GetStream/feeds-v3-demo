@@ -5,6 +5,7 @@ import { useUser } from "../../hooks/useUser";
 import { Loading } from "../../components/loading";
 import { Error } from "../../components/error";
 import Activity from "../../components/activity";
+import { useEffect } from "react";
 
 export default function NotificationsPage() {
   const { user, error, loading: clientLoading, retryConnection } = useUser();
@@ -13,9 +14,17 @@ export default function NotificationsPage() {
     isLoading: notificationsLoading,
     error: notificationsError,
     fetchNotifications,
+    markAsSeen,
   } = useNotifications();
 
   const loading = clientLoading || notificationsLoading;
+
+  // Mark notifications as seen when the page is opened
+  useEffect(() => {
+    if (notifications?.activities && notifications.activities.length > 0) {
+      markAsSeen();
+    }
+  }, [notifications, markAsSeen]);
 
   if (loading) {
     return <Loading message="Loading notifications..." />;

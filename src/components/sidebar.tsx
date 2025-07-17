@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "../hooks/useUser";
+import { useNotifications } from "../hooks/useNotifications";
 import { Avatar } from "./avatar";
 import {
   Bell,
@@ -14,6 +15,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/assets/img/logo.png";
+
 const sidebarItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Search, label: "Explore", href: "/explore" },
@@ -25,6 +27,7 @@ const sidebarItems = [
 
 export default function Sidebar() {
   const { user, clearUser } = useUser();
+  const { unreadCount } = useNotifications();
   const pathname = usePathname();
 
   return (
@@ -39,13 +42,21 @@ export default function Sidebar() {
           <Link
             href={href}
             key={label}
-            className={`flex items-center space-x-2 py-3 px-4 my-3 rounded-full cursor-pointer transition-all duration-200 w-full ${
+            className={`flex items-center space-x-2 py-3 px-4 my-3 rounded-full cursor-pointer transition-all duration-200 w-full relative ${
               href === pathname
                 ? "bg-blue-500 text-white shadow-lg"
                 : "text-gray-300 hover:bg-gray-800 hover:text-white"
             }`}
           >
-            <Icon className="text-2xl" />
+            <div className="relative">
+              <Icon className="text-2xl" />
+              {/* Notification Badge */}
+              {label === "Notifications" && unreadCount > 0 && (
+                <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </div>
+              )}
+            </div>
             <span className="text-xl font-medium">{label}</span>
           </Link>
         ))}
