@@ -4,7 +4,7 @@ import { Avatar } from "@/components";
 import { useUser } from "@/hooks";
 
 export default function ProfilePage() {
-  const { user, loading: clientLoading } = useUser();
+  const { user } = useUser();
   return (
     <div>
       {/* Page Header */}

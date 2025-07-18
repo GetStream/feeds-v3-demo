@@ -8,7 +8,6 @@ import Activity from "../../components/activity";
 
 export default function BookmarksPage() {
   const {
-    user,
     error: userError,
     loading: clientLoading,
     retryConnection,

@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/assets/img/logo.png";
+import Image from "next/image";
 
 const sidebarItems = [
   { icon: Home, label: "Home", href: "/" },
@@ -34,7 +35,7 @@ export default function Sidebar() {
     <div className="flex flex-col items-start justify-between flex-[0.2] p-4 h-screen space-y-2 sticky top-0">
       <div>
         <div className="mb-8 px-4">
-          <img src={Logo.src} className="h-8" alt="Logo" />
+          <Image src={Logo.src} width={115} height={32} alt="Logo" />
         </div>
 
         {/* Navigation Items */}

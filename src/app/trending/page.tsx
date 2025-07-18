@@ -8,7 +8,6 @@ import Activity from "../../components/activity";
 
 export default function ExplorePage() {
   const {
-    user,
     error: userError,
     loading: clientLoading,
     retryConnection,

@@ -8,7 +8,7 @@ import Activity from "../../components/activity";
 import { useEffect } from "react";
 
 export default function NotificationsPage() {
-  const { user, error, loading: clientLoading, retryConnection } = useUser();
+  const { error, loading: clientLoading, retryConnection } = useUser();
   const {
     notifications,
     isLoading: notificationsLoading,
@@ -54,13 +54,16 @@ export default function NotificationsPage() {
         <div className="text-center py-12">
           <div className="text-gray-400 text-lg mb-2">No notifications yet</div>
           <p className="text-gray-500 text-sm">
-            When you get notifications, they'll appear here.
+            When you get notifications, they&apos;ll appear here.
           </p>
         </div>
       ) : (
         <div className="space-y-4">
           {notifications.activities.map((notification) => (
-            <Activity key={`notification-${notification.id}`} activity={notification} />
+            <Activity
+              key={`notification-${notification.id}`}
+              activity={notification}
+            />
           ))}
         </div>
       )}
