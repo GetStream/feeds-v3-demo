@@ -60,10 +60,9 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-4">
           {notifications.activities.map((notification) => (
-            <Activity
-              key={`notification-${notification.id}`}
-              activity={notification}
-            />
+            <div key={`notification-${notification.id}`}>
+              {notification.text}
+            </div>
           ))}
         </div>
       )}

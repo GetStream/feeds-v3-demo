@@ -198,7 +198,7 @@ export default function UserModal({
           <button
             type="submit"
             disabled={modalLoading || !name.trim()}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {modalLoading ? "Creating Profile..." : "Get Started"}
           </button>
