@@ -3,6 +3,7 @@ import { useWhoToFollow } from "../hooks/useWhoToFollow";
 import { Avatar } from "./avatar";
 import { Loading } from "./loading";
 import { UserActions } from "./userActions";
+import Link from "next/link";
 
 export function WhoToFollow() {
   const { whoToFollow, isLoading } = useWhoToFollow();
@@ -21,7 +22,10 @@ export function WhoToFollow() {
           {whoToFollow.map((user) => (
             <div key={user.id} className="space-y-4 my-5">
               <div className="flex items-center justify-between min-w-0">
-                <div className="flex items-center space-x-3 min-w-0">
+                <Link
+                  href={`/profile/${user.id}`}
+                  className="flex items-center space-x-3 min-w-0 flex-1 hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   <div className="flex-shrink-0">
                     <Avatar userName={user.name} size="md" />
                   </div>
@@ -33,7 +37,7 @@ export function WhoToFollow() {
                       @{user.id}
                     </div>
                   </div>
-                </div>
+                </Link>
                 <div className="flex-shrink-0">
                   <UserActions targetUserId={user.id} />
                 </div>

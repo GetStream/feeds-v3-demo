@@ -8,3 +8,5 @@ export { Error } from "./error";
 export { UserActions, UserAvatar } from "./userActions";
 export { Avatar } from "./avatar";
 export { default as UserModal } from "./userModal";
+export { SearchInput } from "./searchInput";
+export { SearchResults } from "./searchResults";

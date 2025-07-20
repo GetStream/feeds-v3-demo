@@ -65,7 +65,10 @@ export default function Sidebar() {
 
       {/* User Profile Section */}
       <div className="mt-auto pt-8 w-full">
-        <div className="flex items-center space-x-3 px-4 py-3 cursor-pointer">
+        <Link
+          href="/profile"
+          className="flex items-center space-x-3 px-4 py-3 cursor-pointer hover:bg-gray-800 rounded-lg transition-colors"
+        >
           <Avatar userName={user?.name} userId={user?.id} size="md" />
           <div className="flex-1">
             <div className="text-white font-medium">
@@ -76,13 +79,17 @@ export default function Sidebar() {
             </div>
           </div>
           <div
-            onClick={clearUser}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              clearUser();
+            }}
             className="p-1 hover:bg-gray-700 rounded-full p-2 transition-colors cursor-pointer"
             title="Logout"
           >
             <LogOut size={15} />
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
