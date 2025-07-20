@@ -31,10 +31,6 @@ export default function ExplorePage() {
   // Show search results if there's a search query, otherwise show all activities
   const isSearching = !!searchQuery.trim();
 
-  if (loading) {
-    return <Loading message="Loading activities..." />;
-  }
-
   if (error) {
     return (
       <Error
@@ -53,10 +49,10 @@ export default function ExplorePage() {
         <p className="text-gray-400 text-sm font-light mb-4">
           Discover and search for activities across the platform.
         </p>
-        
+
         {/* Search Input */}
         <div className="mb-4">
-          <SearchInput 
+          <SearchInput
             placeholder="Search activities..."
             value={searchQuery}
             searchMode={searchMode}
@@ -68,40 +64,50 @@ export default function ExplorePage() {
         </div>
       </div>
 
-      {/* Content */}
-      {isSearching ? (
-        // Show search results when searching
-        <div className="px-4">
-          <SearchResults
-            activities={activities}
-            searchQuery={searchQuery}
-            isLoading={contentLoading}
-            error={contentError ? "Error loading activities" : null}
-          />
-        </div>
+      {loading ? (
+        <Loading message="Loading activities..." />
       ) : (
-        // Show all activities when not searching
-        <div className="space-y-6">
-          <div className="px-4">
-            <h2 className="text-lg font-semibold text-white mb-4">All Activities</h2>
-            {activities.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-lg mb-2">
-                  No activities found
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Check back later for new posts!
-                </p>
+        <>
+          {isSearching ? (
+            // Show search results when searching
+            <div className="px-4">
+              <SearchResults
+                activities={activities}
+                searchQuery={searchQuery}
+                isLoading={contentLoading}
+                error={contentError ? "Error loading activities" : null}
+              />
+            </div>
+          ) : (
+            // Show all activities when not searching
+            <div className="space-y-6">
+              <div className="px-4">
+                <h2 className="text-lg font-semibold text-white mb-4">
+                  All Activities
+                </h2>
+                {activities.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 text-lg mb-2">
+                      No activities found
+                    </div>
+                    <p className="text-gray-500 text-sm">
+                      Check back later for new posts!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {activities.map((activity) => (
+                      <Activity
+                        key={`explore-${activity.id}`}
+                        activity={activity}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="space-y-4">
-                {activities.map((activity) => (
-                  <Activity key={`explore-${activity.id}`} activity={activity} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

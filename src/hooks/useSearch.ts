@@ -8,11 +8,10 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 
 // Define a unique query key factory
-export const activitiesQueryKey = (query: string, mode: "$q" | "$autocomplete") => [
-  "activities",
-  query,
-  mode,
-];
+export const activitiesQueryKey = (
+  query: string,
+  mode: "$q" | "$autocomplete"
+) => ["activities", query, mode];
 
 const fetchActivities = async (
   client: FeedsClient,
@@ -36,7 +35,9 @@ const fetchActivities = async (
     };
 
     const response = await client.queryActivities(params);
-    return response.activities?.filter(activity => activity.type === "post") || [];
+    return (
+      response.activities?.filter((activity) => activity.type === "post") || []
+    );
   } catch (error) {
     console.error("Error fetching activities:", error);
     toast.error("Error fetching activities");
@@ -57,7 +58,12 @@ export function useSearch() {
   } = useQuery({
     queryKey: activitiesQueryKey(searchQuery, searchMode),
     queryFn: () =>
-      fetchActivities(client as FeedsClient, user as User, searchQuery, searchMode),
+      fetchActivities(
+        client as FeedsClient,
+        user as User,
+        searchQuery,
+        searchMode
+      ),
     enabled: !!client && !!user,
     refetchOnWindowFocus: false,
     staleTime: 0, // Always refetch when query changes
