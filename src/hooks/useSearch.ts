@@ -36,7 +36,7 @@ const fetchActivities = async (
     };
 
     const response = await client.queryActivities(params);
-    return response.activities || [];
+    return response.activities?.filter(activity => activity.type === "post") || [];
   } catch (error) {
     console.error("Error fetching activities:", error);
     toast.error("Error fetching activities");
