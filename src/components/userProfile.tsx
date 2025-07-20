@@ -14,6 +14,9 @@ interface UserProfileProps {
   onBack?: () => void;
 }
 
+// TODO: This is a temporary solution to get the user name from activities.
+// We need to find a better way to get the user name from activities.
+// This makes a lot of requests to the API.
 // Get user name from activities
 const getUserNameFromActivities = async (
   client: FeedsClient,
