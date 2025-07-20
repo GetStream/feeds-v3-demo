@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import ReactionsPanel from "./reaction";
 import { useFeedActions } from "../hooks";
 import CommentsPanel from "./comment";
+import Link from "next/link";
 
 export default function Activity({ activity }: { activity: ActivityResponse }) {
   const { user } = useUser();
@@ -14,13 +15,30 @@ export default function Activity({ activity }: { activity: ActivityResponse }) {
   return (
     <article className="border-b border-b-2 border-gray-800 shadow-sm my-15 transition-colors activity">
       <div className="flex items-start space-x-3 mb-4">
-        <UserAvatar userId={activity.user?.name || "..."} />
+        {activity.user?.id ? (
+          <Link href={`/profile/${activity.user.id}`}>
+            <div className="cursor-pointer hover:opacity-80 transition-opacity">
+              <UserAvatar userId={activity.user?.name || "..."} />
+            </div>
+          </Link>
+        ) : (
+          <UserAvatar userId={activity.user?.name || "..."} />
+        )}
         <div className="flex-1">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-2">
-              <span className="font-semibold text-white truncate overflow-hidden whitespace-nowrap max-w-[50%]">
-                {activity.user?.name || activity.user?.id || "..."}
-              </span>
+              {activity.user?.id ? (
+                <Link
+                  href={`/profile/${activity.user.id}`}
+                  className="font-semibold text-white truncate overflow-hidden whitespace-nowrap max-w-[50%] hover:text-blue-400 transition-colors cursor-pointer"
+                >
+                  {activity.user?.name || activity.user?.id || "..."}
+                </Link>
+              ) : (
+                <span className="font-semibold text-white truncate overflow-hidden whitespace-nowrap max-w-[50%]">
+                  {activity.user?.name || activity.user?.id || "..."}
+                </span>
+              )}
               {activity.created_at && (
                 <span className="text-sm text-gray-400">
                   {new Date(activity.created_at).toLocaleDateString("en-US", {
