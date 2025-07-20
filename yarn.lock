@@ -549,9 +549,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stream-io/feeds-client@npm:^0.1.0":
-  version: 0.1.4
-  resolution: "@stream-io/feeds-client@npm:0.1.4"
+"@stream-io/feeds-client@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@stream-io/feeds-client@npm:0.1.5"
   dependencies:
     axios: "npm:^1.7.7"
   peerDependencies:
@@ -559,7 +559,7 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 10c0/8f03cf125ab9de8c15acb0c463ae4676221610e2b33a71252f41438ccaa82881afe8f10fb3a919ae29436cfca5e02e60a0d945f85585a2ce29393267708584d9
+  checksum: 10c0/3f7bf54ccee2ef10e2ce290827a1184ade1f3b4dd71543a99a7d4399fa823382fe66ecc4b1a76bc5fce6860b67cc744317d4e8cb14aa4c1fde650c605b09880e
   languageName: node
   linkType: hard
 
@@ -2220,7 +2220,7 @@ __metadata:
   resolution: "feeds-v3-app@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3"
-    "@stream-io/feeds-client": "npm:^0.1.0"
+    "@stream-io/feeds-client": "npm:^0.1.5"
     "@stream-io/node-sdk": "npm:0.5.0"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.82.0"
