@@ -65,9 +65,9 @@ export function useNotifications() {
     if (notificationsFeed) {
       notificationsFeed.state.subscribe((data) => {
         console.log("subscribe", data);
+        const unreadCount = data.notification_status?.unread || 0;
+        setUnreadCount(unreadCount);
       });
-      const unreadCount = notifications?.notification_status?.unread || 0;
-      setUnreadCount(unreadCount);
     }
   }, [notificationsFeed]);
 
