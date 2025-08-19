@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@stream-io/feeds-client": "^0.1.5",
-    "@stream-io/node-sdk": "0.5.0",
+    "@stream-io/feeds-client": "^0.2.0",
+    "@stream-io/node-sdk": "^0.6.0",
     "@tanstack/react-query": "^5.82.0",
     "emoji-picker-react": "^4.12.3",
     "lucide-react": "^0.525.0",

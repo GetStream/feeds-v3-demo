@@ -193,14 +193,14 @@ export function useFeedManager() {
           try {
             const follows = await client.queryFollows({
               filter: {
-                source_feed: timeline.fid,
-                target_feed: { $in: [user.fid] },
+                source_feed: timeline.feed,
+                target_feed: { $in: [user.feed] },
               },
             });
             if (follows.follows.length === 0) {
               await client.follow({
-                source: timeline.fid,
-                target: user.fid,
+                source: timeline.feed,
+                target: user.feed,
               });
               // Small delay to ensure follow relationship is established
               await new Promise((resolve) => setTimeout(resolve, 100));

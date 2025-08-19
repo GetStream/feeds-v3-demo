@@ -39,7 +39,7 @@ const deleteActivityFromFeed = async (
   activityId: string
 ): Promise<void> => {
   await client.deleteActivity({
-    activity_id: activityId,
+    id: activityId,
   });
 };
 

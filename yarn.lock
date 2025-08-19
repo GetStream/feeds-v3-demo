@@ -549,9 +549,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stream-io/feeds-client@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@stream-io/feeds-client@npm:0.1.5"
+"@stream-io/feeds-client@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@stream-io/feeds-client@npm:0.2.0"
   dependencies:
     axios: "npm:^1.7.7"
   peerDependencies:
@@ -559,13 +559,13 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 10c0/3f7bf54ccee2ef10e2ce290827a1184ade1f3b4dd71543a99a7d4399fa823382fe66ecc4b1a76bc5fce6860b67cc744317d4e8cb14aa4c1fde650c605b09880e
+  checksum: 10c0/e5cc0169b6dabbaecc8f0578b6cb6a7fdbbe07d97885279469f62e212f8bbf4ea03408bfdfb554b9c44d160d5a0a1aa83291f2367947f62363bbb57f0db5be0a
   languageName: node
   linkType: hard
 
-"@stream-io/node-sdk@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@stream-io/node-sdk@npm:0.5.0"
+"@stream-io/node-sdk@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@stream-io/node-sdk@npm:0.6.0"
   dependencies:
     "@types/jsonwebtoken": "npm:^9.0.3"
     "@types/node": "npm:^18.3.0"
@@ -576,7 +576,7 @@ __metadata:
   peerDependenciesMeta:
     "@stream-io/openai-realtime-api":
       optional: true
-  checksum: 10c0/0c5be857e31ae429362e5cf240718736a6981e29737fabfb085b4d5b8f18babed5fe39eb5d535411b0bf2ba01a9658ce4647448f744846a5dd14740df75e3f13
+  checksum: 10c0/de00d8af7f59dccbda495c7b76ef7bcbb5ebdb874d47a91a72fc87f7a45739f1beb7a5fb2dc9572fc1d06daa11da94dd7807e14af38402a5524060719e8b9bb1
   languageName: node
   linkType: hard
 
@@ -1351,13 +1351,13 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.7.7":
-  version: 1.10.0
-  resolution: "axios@npm:1.10.0"
+  version: 1.11.0
+  resolution: "axios@npm:1.11.0"
   dependencies:
     follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
+    form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/2239cb269cc789eac22f5d1aabd58e1a83f8f364c92c2caa97b6f5cbb4ab2903d2e557d9dc670b5813e9bcdebfb149e783fb8ab3e45098635cd2f559b06bd5d8
+  checksum: 10c0/5de273d33d43058610e4d252f0963cc4f10714da0bfe872e8ef2cbc23c2c999acc300fd357b6bce0fc84a2ca9bd45740fa6bb28199ce2c1266c8b1a393f2b36e
   languageName: node
   linkType: hard
 
@@ -2220,8 +2220,8 @@ __metadata:
   resolution: "feeds-v3-app@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3"
-    "@stream-io/feeds-client": "npm:^0.1.5"
-    "@stream-io/node-sdk": "npm:0.5.0"
+    "@stream-io/feeds-client": "npm:^0.2.0"
+    "@stream-io/node-sdk": "npm:^0.6.0"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.82.0"
     "@types/node": "npm:^20"
@@ -2293,12 +2293,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.15.6":
-  version: 1.15.9
-  resolution: "follow-redirects@npm:1.15.9"
+  version: 1.15.11
+  resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/5829165bd112c3c0e82be6c15b1a58fa9dcfaede3b3c54697a82fe4a62dd5ae5e8222956b448d2f98e331525f05d00404aba7d696de9e761ef6e42fdc780244f
+  checksum: 10c0/d301f430542520a54058d4aeeb453233c564aaccac835d29d15e050beb33f339ad67d9bddbce01739c5dc46a6716dbe3d9d0d5134b1ca203effa11a7ef092343
   languageName: node
   linkType: hard
 
@@ -2311,7 +2311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0":
+"form-data@npm:^4.0.4":
   version: 4.0.4
   resolution: "form-data@npm:4.0.4"
   dependencies:
