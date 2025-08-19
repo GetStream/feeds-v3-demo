@@ -11,11 +11,11 @@ interface SearchResultsProps {
   error?: string | null;
 }
 
-export function SearchResults({ 
-  activities = [], 
-  searchQuery, 
-  isLoading, 
-  error 
+export function SearchResults({
+  activities = [],
+  searchQuery,
+  isLoading,
+  error,
 }: SearchResultsProps) {
   const hasResults = activities.length > 0;
 
@@ -24,7 +24,9 @@ export function SearchResults({
       <div className="space-y-4">
         <div className="text-center py-8">
           <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Searching for "{searchQuery}"...</p>
+          <p className="text-gray-400">
+            Searching for &quot;{searchQuery}&quot;...
+          </p>
         </div>
       </div>
     );
@@ -45,7 +47,9 @@ export function SearchResults({
     return (
       <div className="text-center py-12">
         <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-300 mb-2">Search for activities</h3>
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
+          Search for activities
+        </h3>
         <p className="text-gray-500 text-sm">
           Enter a search term to find activities
         </p>
@@ -57,9 +61,11 @@ export function SearchResults({
     return (
       <div className="text-center py-12">
         <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-300 mb-2">No results found</h3>
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
+          No results found
+        </h3>
         <p className="text-gray-500 text-sm">
-          No activities found for "{searchQuery}"
+          No activities found for &quot;{searchQuery}&quot;
         </p>
         <p className="text-gray-500 text-xs mt-2">
           Try different keywords or search terms
@@ -75,7 +81,8 @@ export function SearchResults({
         <div className="flex items-center space-x-2">
           <Search className="w-5 h-5 text-gray-400" />
           <span className="text-gray-300">
-            {activities.length} result{activities.length !== 1 ? "s" : ""} for "{searchQuery}"
+            {activities.length} result{activities.length !== 1 ? "s" : ""} for
+            &quot;{searchQuery}&quot;
           </span>
         </div>
         <div className="flex items-center space-x-2">
@@ -88,9 +95,12 @@ export function SearchResults({
       {/* Activities Results */}
       <div className="space-y-4">
         {activities.map((activity) => (
-          <Activity key={`search-activity-${activity.id}`} activity={activity} />
+          <Activity
+            key={`search-activity-${activity.id}`}
+            activity={activity}
+          />
         ))}
       </div>
     </div>
   );
-} 
+}

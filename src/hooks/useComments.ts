@@ -48,7 +48,7 @@ const deleteCommentFromAPI = async (
   commentId: string
 ): Promise<void> => {
   await client.deleteComment({
-    comment_id: commentId,
+    id: commentId,
   });
 };
 
@@ -59,7 +59,7 @@ const addCommentReactionToAPI = async (
   type: string
 ): Promise<AddCommentReactionResponse> => {
   return await client.addCommentReaction({
-    comment_id: commentId,
+    id: commentId,
     type,
     create_notification_activity: true,
   });
@@ -72,7 +72,7 @@ const deleteCommentReactionFromAPI = async (
   type: string
 ): Promise<void> => {
   await client.deleteCommentReaction({
-    comment_id: commentId,
+    id: commentId,
     type,
   });
 };
