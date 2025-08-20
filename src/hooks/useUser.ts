@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 // Default values from environment variables
 const defaultApiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 const defaultBaseUrl =
-  process.env.NEXT_PUBLIC_FEEDS_BASE_URL || "https://feeds.stream-io-api.com";
+  process.env.NEXT_PUBLIC_FEEDS_BASE_URL || "https://chat.stream-io-api.com";
 
 export interface User {
   id: string;
@@ -77,7 +77,6 @@ const connectUser = async (
   customSettings?: CustomSettings
 ): Promise<FeedsClient> => {
   const settings = customSettings || getCustomSettingsFromStorage();
-
   // Use custom settings if available, otherwise use default environment variables
   const apiKey = settings?.apiKey || defaultApiKey;
   const baseUrl = settings?.baseUrl || defaultBaseUrl;
