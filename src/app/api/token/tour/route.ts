@@ -8,8 +8,14 @@ const ALLOWED_ORIGINS = [
 ];
 
 function cors(origin: string | null) {
-  const allowOrigin =
-    origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  let allowOrigin = ALLOWED_ORIGINS[0];
+  if (origin) {
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      allowOrigin = origin;
+    } else if (origin.endsWith(".vercel.app")) {
+      allowOrigin = origin;
+    }
+  }
   return {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
