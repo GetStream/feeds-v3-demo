@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     }
 
     const client = new StreamClient(
-      process.env.NEXT_PUBLIC_STREAM_API_KEY!,
-      process.env.STREAM_API_SECRET!,
+      process.env.NEXT_PUBLIC_STREAM_TOUR_API_KEY!,
+      process.env.STREAM_TOUR_API_SECRET!,
       { basePath: "https://chat.stream-io-api.com" }
     );
 
