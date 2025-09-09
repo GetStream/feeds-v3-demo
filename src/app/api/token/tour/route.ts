@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { StreamClient } from "@stream-io/node-sdk";
 
 const ALLOWED_ORIGINS = [
-  "https://getstream.io/",
+  "https://getstream.io",
+  "https://staging.getstream.io",
   "https://local.getstream.io:3000",
   "http://local.getstream.io:3000",
 ];
@@ -53,15 +54,15 @@ export async function POST(req: NextRequest) {
       await client.upsertUsers([{ id, name }]);
     }
 
-    await client.feeds.getOrCreateFeedGroup({
-      id: "foryou-popular",
-      activity_selectors: [{ type: "popular" }],
-      ranking: {
-        type: "expression",
-        score:
-          "popularity * 2 + comment_count * 3 + reaction_count * 1.5",
-      },
-    });
+    // await client.feeds.getOrCreateFeedGroup({
+    //   id: "foryou-popular",
+    //   activity_selectors: [{ type: "popular" }],
+    //   ranking: {
+    //     type: "expression",
+    //     score:
+    //       "popularity * 2 + comment_count * 3 + reaction_count * 1.5",
+    //   },
+    // });
 
     // These are needed only once per application initialization
     // await client.createBlockList({
