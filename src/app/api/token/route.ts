@@ -38,15 +38,6 @@ export async function POST(req: NextRequest) {
       ? getCustomClient(customSettings)
       : getDefaultClient();
 
-    const usr = await client.feeds.queryFeeds({
-      filter: {
-        id: {
-          $eq: "darko123",
-        },
-      },
-    });
-    console.log("user", usr);
-
     // Create or update user if name is provided
     if (name) {
       await client.upsertUsers([
@@ -68,9 +59,6 @@ export async function POST(req: NextRequest) {
               "popularity * external.weight + comment_count * external.comment_weight + external.base_score",
           },
         }),
-        // await client.feeds.createFeedGroup({
-        //   id: "foryou",
-        // }),
       ]);
     } catch {}
     const token = client.generateUserToken({ user_id });
