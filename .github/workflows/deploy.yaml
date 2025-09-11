@@ -20,11 +20,6 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      NEXT_PUBLIC_STREAM_API_KEY: ${{ secrets.NEXT_PUBLIC_STREAM_API_KEY }}
-      STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
-      NEXT_PUBLIC_FEEDS_BASE_URL: ${{ secrets.NEXT_PUBLIC_FEEDS_BASE_URL }}
-      NEXT_PUBLIC_STREAM_TOUR_API_KEY: ${{ secrets.NEXT_PUBLIC_STREAM_TOUR_API_KEY }}
-      STREAM_TOUR_API_SECRET: ${{ secrets.STREAM_TOUR_API_SECRET }}
 
     steps:
       - name: Checkout repo
@@ -49,6 +44,12 @@ jobs:
 
       - name: Build project artifacts
         run: vercel build --prod --token="$VERCEL_TOKEN"
+        env:
+          NEXT_PUBLIC_STREAM_API_KEY: ${{ secrets.NEXT_PUBLIC_STREAM_API_KEY }}
+          STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+          NEXT_PUBLIC_FEEDS_BASE_URL: ${{ secrets.NEXT_PUBLIC_FEEDS_BASE_URL }}
+          NEXT_PUBLIC_STREAM_TOUR_API_KEY: ${{ secrets.NEXT_PUBLIC_STREAM_TOUR_API_KEY }}
+          STREAM_TOUR_API_SECRET: ${{ secrets.STREAM_TOUR_API_SECRET }}
 
       - name: Deploy to Vercel (prebuilt, production)
         run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
