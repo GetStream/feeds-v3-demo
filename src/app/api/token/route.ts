@@ -48,19 +48,23 @@ export async function POST(req: NextRequest) {
       ]);
     }
 
-    try {
-      Promise.all([
-        await client.feeds.createFeedView({
-          id: "popular-view",
-          activity_selectors: [{ type: "popular" }],
-          ranking: {
-            type: "expression",
-            score:
-              "popularity * external.weight + comment_count * external.comment_weight + external.base_score",
+    await client.feeds.getOrCreateFeedView({
+      id: "popular-view",
+      activity_selectors: [{ type: "popular" }],
+      ranking: {
+        type: "expression",
+        score:
+          "popularity * external.weight + comment_count * external.comment_weight + external.base_score",
+        defaults: {
+          external: {
+            weight: 2.5,
+            comment_weight: 20,
+            base_score: 10,
           },
-        }),
-      ]);
-    } catch {}
+        },
+      },
+    });
+
     const token = client.generateUserToken({ user_id });
 
     return NextResponse.json({ token });
